@@ -2,6 +2,8 @@ from functools import wraps
 
 from copy import deepcopy
 
+from django.utils.module_loading import import_string
+
 
 class BaseHandler:
     def __init__(self, request, args):
@@ -21,9 +23,25 @@ class BaseHandler:
         @wraps(method)
         def view(request, **kwargs):
             handler = cls(request, kwargs)
-            return method(handler)
+            handler.call_processors('view')
+            response = None
+            try:
+                response = method(handler)
+                return response
+            finally:
+                handler.call_processors('post_view', response=response)
 
         return view
+
+    def get_processors(self, purpose):
+        return getattr(self, '%s_processors' % purpose, ())
+
+    def call_processors(self, purpose, **kwargs):
+        for proc in self.get_processors(purpose):
+            if isinstance(proc, str):
+                proc = getattr(self, proc, None) or import_string(proc)
+            kwargs['purpose'] = purpose
+            proc(**kwargs)
 
 
 class BaseModelHandler(BaseHandler):
@@ -54,17 +72,21 @@ class BaseModelHandler(BaseHandler):
 
     def retrieve_object(self):
         queryset = self.get_queryset('retrieve')
-        return queryset.get(**{self.id_field_name: self.args[self.id_data_name]})
+        object = queryset.get(**{self.id_field_name: self.args[self.id_data_name]})
+        self.call_processors('retrieve_object', object=object)
+        return object
 
 
 class ModelHandlerReadMixin(BaseModelHandler):
     def handle_list(self):
+        self.call_processors('list')
         queryset = self.get_queryset('list')
         object_list = self.process_object_list('list', queryset)
         schema = self.get_schema('list')
         return schema.dump(object_list, many=True).data
 
     def handle_retrieve(self):
+        self.call_processors('retrieve')
         object = self.retrieve_object()
         schema = self.get_schema('retrieve')
         return schema.dump(object).data
@@ -74,6 +96,7 @@ class ModelHandlerCreateMixin(BaseModelHandler):
     create_data_name = 'data'
 
     def handle_create(self):
+        self.call_processors('create')
         schema = self.get_schema('create')
         result = schema.load(self.args[self.create_data_name])
         assert not result.errors
@@ -84,7 +107,7 @@ class ModelHandlerCreateMixin(BaseModelHandler):
         data.full_clean()
         data.save()
 
-        schema = self.get_schema('post-create', object=data)
+        schema = self.get_schema('post_create', object=data)
         return schema.dump(data).data
 
 
@@ -92,6 +115,7 @@ class ModelHandlerUpdateMixin(BaseModelHandler):
     update_data_name = 'data'
 
     def handle_update(self):
+        self.call_processors('update')
         object = self.retrieve_object()
         schema = self.get_schema('update', object=object)
         result = schema.load(self.args[self.update_data_name])
@@ -100,14 +124,17 @@ class ModelHandlerUpdateMixin(BaseModelHandler):
             setattr(object, key, value)
         object.full_clean()
         object.save()
-        schema = self.get_schema('post-update', object=object)
+        self.call_processors('post_update', object=object)
+        schema = self.get_schema('post_update', object=object)
         return schema.dump(object).data
 
 
 class ModelHandlerDeleteMixin(BaseModelHandler):
     def handle_delete(self):
+        self.call_processors('delete')
         object = self.retrieve_object()
         object.delete()
+        self.call_processors('post_delete', object=object)
 
 
 class CRUDModelHandler(
