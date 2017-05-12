@@ -32,7 +32,10 @@ class BaseModelHandler(BaseHandler):
         schema_class = getattr(self, '%s_schema_class' % purpose, None)
         if schema_class is None:
             schema_class = self.schema_class
-        return schema_class()
+        kwargs = {}
+        if purpose == 'update':
+            kwargs['partial'] = True
+        return schema_class(**kwargs)
 
     def get_queryset(self, purpose):
         queryset = getattr(self, '%s_queryset' % purpose, None)

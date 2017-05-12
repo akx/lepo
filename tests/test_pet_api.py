@@ -61,3 +61,19 @@ def test_delete_pet(client):
     assert len(get_data_from_response(client.get('/api/pets'))) == 2
     client.delete('/api/pets/{}'.format(pet1.id))
     assert len(get_data_from_response(client.get('/api/pets'))) == 1
+
+
+@pytest.mark.django_db
+def test_update_pet(client):
+    pet1 = Pet.objects.create(name='henlo')
+    payload = {'name': 'worl', 'tag': 'bunner'}
+    resp = client.patch(
+        '/api/pets/{}'.format(pet1.id),
+        json.dumps(payload).encode('utf-8'),
+        content_type='application/json'
+    )
+    assert resp.status_code == 200
+
+    pet_data = get_data_from_response(client.get('/api/pets'))[0]
+    assert pet_data['name'] == 'worl'
+    assert pet_data['tag'] == 'bunner'

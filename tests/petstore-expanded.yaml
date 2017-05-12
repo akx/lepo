@@ -107,6 +107,29 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Error'
+    patch:
+      description: updates a pet by ID
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to update
+          required: true
+          type: integer
+          format: int64
+        - name: pet
+          in: body
+          description: Pet data to update
+          required: true
+          schema:
+            $ref: '#/definitions/NewPet'
+      responses:
+        "200":
+          description: pet updated
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Pet:
     allOf:
