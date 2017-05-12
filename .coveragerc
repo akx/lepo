@@ -1,0 +1,8 @@
+[run]
+#branch = True
+omit =
+	*site-packages*
+	lepo_tests/settings.py
+	lepo_tests/wsgi.py
+	manage.py
+	setup.py

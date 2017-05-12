@@ -70,3 +70,9 @@ class Router:
                     self.handlers[name] = value
             except:
                 pass
+
+    def get_schema(self, ref):
+        # TODO: This is not very skookum.
+        for name, schema in self.api.definitions.items():
+            if ref == '#/definitions/%s' % name:
+                return schema
