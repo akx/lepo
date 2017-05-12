@@ -18,7 +18,7 @@ class Path:
             r'\{(.+?)\}',
             lambda m: '(?P<%s>.+?)' % m.group(1),
             self.path,
-        ).lstrip('/')
+        ).lstrip('/') + '$'
         self.name = re.sub(  # todo: embetter
             r'[^a-z0-9]+',
             '-',
