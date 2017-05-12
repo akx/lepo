@@ -3,6 +3,7 @@ from functools import reduce
 from django.db.models import Q
 from marshmallow import Schema, fields, post_load
 
+from lepo.handlers import CRUDModelHandler
 from lepo_tests.models import Pet
 
 
@@ -16,6 +17,35 @@ class PetSchema(Schema):
         return Pet(**data)
 
 
+class PetHandler(CRUDModelHandler):
+    model = Pet
+    queryset = Pet.objects.all()
+    schema_class = PetSchema
+    create_data_name = 'pet'
+
+    def process_object_list(self, purpose, object_list):
+        if purpose == 'list':
+            tags = self.args.get('tags')
+            if tags:
+                tags_q = reduce(
+                    lambda q, term: q | Q(tag=term),
+                    tags,
+                    Q()
+                )
+                object_list = object_list.filter(tags_q)
+            limit = self.args.get('limit')
+            if limit is not None:
+                object_list = object_list[:limit]
+        return object_list
+
+
+find_pets = PetHandler.get_handler('handle_list')
+add_pet = PetHandler.get_handler('handle_create')
+find_pet_by_id = PetHandler.get_handler('handle_retrieve')
+delete_pet = PetHandler.get_handler('handle_delete')
+
+# Could instead do this:
+"""
 def find_pets(request, limit=None, tags=()):
     pets = Pet.objects.all()[:limit]
     if tags:
@@ -40,3 +70,4 @@ def find_pet_by_id(request, id):
 
 def delete_pet(request, id):
     Pet.objects.filter(id=id).delete()
+"""
