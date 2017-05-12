@@ -1,3 +1,6 @@
+from functools import reduce
+
+from django.db.models import Q
 from marshmallow import Schema, fields, post_load
 
 from lepo_tests.models import Pet
@@ -14,8 +17,14 @@ class PetSchema(Schema):
 
 
 def find_pets(request, limit=None, tags=()):
-    assert not tags
     pets = Pet.objects.all()[:limit]
+    if tags:
+        tags_q = reduce(
+            lambda q, term: q | Q(tag=term),
+            tags,
+            Q()
+        )
+        pets = pets.filter(tags_q)
     return PetSchema().dump(pets, many=True).data
 
 

@@ -44,6 +44,17 @@ def test_post_pet(client, with_tag):
 
 
 @pytest.mark.django_db
+def test_search_by_tag(client):
+    pet1 = Pet.objects.create(name='smolboye', tag='pupper')
+    pet2 = Pet.objects.create(name='longboye', tag='doggo')
+    assert len(get_data_from_response(client.get('/api/pets'))) == 2
+    assert len(get_data_from_response(client.get('/api/pets', {'tags': 'pupper'}))) == 1
+    assert len(get_data_from_response(client.get('/api/pets', {'tags': 'daggo'}))) == 0
+    assert len(get_data_from_response(client.get('/api/pets', {'tags': 'doggo'}))) == 1
+    assert len(get_data_from_response(client.get('/api/pets', {'tags': 'pupper,doggo'}))) == 2
+
+
+@pytest.mark.django_db
 def test_delete_pet(client):
     pet1 = Pet.objects.create(name='henlo')
     pet2 = Pet.objects.create(name='worl')
