@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
-#functools32==3.2.3.post2  # via jsonschema
 inflection==0.3.1         # via openapi
 jsonschema==2.6.0         # via openapi
+marshmallow==2.13.5
 openapi==0.5.0
