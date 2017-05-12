@@ -1,5 +1,7 @@
+import json
 import re
 from importlib import import_module
+from io import StringIO
 
 import openapi
 from django.conf.urls import url
@@ -38,8 +40,19 @@ class Router:
 
     @classmethod
     def from_file(cls, filename):
-        with open(filename) as infp:
+        infp = None
+        try:
+            if filename.endswith('.yaml'):  # Transcode YAML
+                with open(filename) as yaml_infp:
+                    import yaml
+                    data = yaml.safe_load(yaml_infp)
+                    infp = StringIO(json.dumps(data))
+            else:
+                infp = open(filename)
             api = openapi.load(infp)
+        finally:
+            if infp is not None:
+                infp.close()
         return cls(api)
 
     def get_urls(self):

@@ -17,4 +17,5 @@ pytest-django==3.1.2
 pytest-xdist==1.16.0
 pytest==3.0.7
 pytz==2017.2              # via django
+pyyaml==3.12
 six==1.10.0               # via pip-tools
