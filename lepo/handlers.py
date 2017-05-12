@@ -29,10 +29,16 @@ class BaseModelHandler(BaseHandler):
     id_field_name = 'pk'
 
     def get_schema(self, purpose, object=None):
-        return self.schema_class()
+        schema_class = getattr(self, '%s_schema_class' % purpose, None)
+        if schema_class is None:
+            schema_class = self.schema_class
+        return schema_class()
 
     def get_queryset(self, purpose):
-        return deepcopy(self.queryset)
+        queryset = getattr(self, '%s_queryset' % purpose, None)
+        if queryset is None:
+            queryset = self.queryset
+        return deepcopy(queryset)
 
     def process_object_list(self, purpose, object_list):
         return object_list
