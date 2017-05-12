@@ -9,7 +9,13 @@ class BaseHandler:
         self.args = args
 
     @classmethod
-    def get_handler(cls, method_name):
+    def get_view(cls, method_name):
+        """
+        Get a Django function view calling the given method (and pre/post-processors)
+
+        :param method_name: The method on the class
+        :return: View function
+        """
         method = getattr(cls, method_name)
 
         @wraps(method)

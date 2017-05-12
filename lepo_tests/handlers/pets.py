@@ -36,11 +36,11 @@ class PetHandler(CRUDModelHandler):
         return super(PetHandler, self).process_object_list(purpose, object_list)
 
 
-find_pets = PetHandler.get_handler('handle_list')
-add_pet = PetHandler.get_handler('handle_create')
-find_pet_by_id = PetHandler.get_handler('handle_retrieve')
-delete_pet = PetHandler.get_handler('handle_delete')
-update_pet = PetHandler.get_handler('handle_update')
+find_pets = PetHandler.get_view('handle_list')
+add_pet = PetHandler.get_view('handle_create')
+find_pet_by_id = PetHandler.get_view('handle_retrieve')
+delete_pet = PetHandler.get_view('handle_delete')
+update_pet = PetHandler.get_view('handle_update')
 
 # Could instead do this:
 """
