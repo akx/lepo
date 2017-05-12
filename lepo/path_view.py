@@ -23,7 +23,7 @@ def read_parameters(operation, request, view_kwargs):
                 value = view_kwargs[param['name']]
             elif param['in'] == 'body':
                 # TODO: support other formats than JSON
-                value = json.load(request.body)
+                value = json.load(request)  # use the file-like API of HTTPRequests
             else:
                 raise ValueError('unsupported `in` value in %r' % param)
         except KeyError:
