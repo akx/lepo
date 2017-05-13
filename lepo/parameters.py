@@ -33,7 +33,7 @@ def get_parameter_value(request, view_kwargs, param):
         return view_kwargs[param['name']]
     elif param['in'] == 'body':
         # TODO: support other formats than JSON
-        return json.load(request)  # use the file-like API of HTTPRequests
+        return json.loads(request.body.decode('UTF-8'))
     else:
         raise NotImplementedError('unsupported `in` value in %r' % param)
 
