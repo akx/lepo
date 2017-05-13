@@ -1,6 +1,7 @@
 import re
 from importlib import import_module
 
+from copy import deepcopy
 from django.conf.urls import url
 from django.utils.text import camel_case_to_spaces
 
@@ -32,7 +33,8 @@ class Path:
 
 class Router:
     def __init__(self, api):
-        self.api = api
+        self.api = deepcopy(api)
+        self.api.pop('host', None)
         self.handlers = {}
 
     @classmethod
