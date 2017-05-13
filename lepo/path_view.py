@@ -1,7 +1,7 @@
 import json
 
 import jsonschema
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.utils.encoding import force_text
 from django.views import View
@@ -31,10 +31,10 @@ def coerce_parameter(api_info, parameter, value):
 
 def read_parameters(api_info, request, view_kwargs):
     """
-    :type api_info: APIInfo 
-    :type request: HttpRequest 
+    :type api_info: APIInfo
+    :type request: HttpRequest
     :type view_kwargs: dict[str, object]
-    :rtype: dict[str, object] 
+    :rtype: dict[str, object]
     """
     params = {}
     errors = {}
