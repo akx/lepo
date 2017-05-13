@@ -1,9 +1,6 @@
-import json
 import re
 from importlib import import_module
-from io import StringIO
 
-import openapi
 from django.conf.urls import url
 from django.utils.text import camel_case_to_spaces
 
@@ -40,24 +37,18 @@ class Router:
 
     @classmethod
     def from_file(cls, filename):
-        infp = None
-        try:
-            if filename.endswith('.yaml'):  # Transcode YAML
-                with open(filename) as yaml_infp:
-                    import yaml
-                    data = yaml.safe_load(yaml_infp)
-                    infp = StringIO(json.dumps(data))
+        with open(filename) as infp:
+            if filename.endswith('.yaml'):
+                import yaml
+                data = yaml.safe_load(infp)
             else:
-                infp = open(filename)
-            api = openapi.load(infp)
-        finally:
-            if infp is not None:
-                infp.close()
-        return cls(api)
+                import json
+                data = json.load(infp)
+        return cls(data)
 
     def get_urls(self):
         urls = []
-        for path, mapping in self.api.paths.items():
+        for path, mapping in self.api['paths'].items():
             path = Path(api=self, path=path, mapping=mapping)
             urls.append(url(path.regex, path.view_class.as_view(), name=path.name))
         return urls
@@ -86,6 +77,6 @@ class Router:
 
     def get_schema(self, ref):
         # TODO: This is not very skookum.
-        for name, schema in self.api.definitions.items():
+        for name, schema in self.api.get('definitions', {}).items():
             if ref == '#/definitions/%s' % name:
                 return schema
