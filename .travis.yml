@@ -1,0 +1,19 @@
+sudo: false
+cache:
+  directories:
+    - $HOME/.cache/pip
+language: python
+python:
+#  - "3.4"
+  - "3.5"
+#  - "3.6"
+env:
+  - DJANGO=django~=1.11.0
+install:
+  - pip install -r requirements-dev.txt
+  - "pip install $DJANGO -e ."
+script:
+  - flake8 lepo
+  - py.test -vvv --cov .
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

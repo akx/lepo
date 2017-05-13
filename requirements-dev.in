@@ -1,4 +1,7 @@
-django>=1.10
+autoflake
+autopep8
+flake8
+isort
 pip-tools
 pytest
 pytest-cov
