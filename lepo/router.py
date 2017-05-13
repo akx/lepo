@@ -1,37 +1,16 @@
-import re
+from copy import deepcopy
 from importlib import import_module
 
-from copy import deepcopy
 from django.conf.urls import url
 from django.utils.text import camel_case_to_spaces
 
 from lepo.excs import MissingHandler
-from lepo.path_view import PathView
-
-
-class Path:
-    def __init__(self, api, path, mapping):
-        self.api = api
-        self.path = path
-        self.mapping = mapping
-        self.regex = re.sub(
-            r'\{(.+?)\}',
-            lambda m: '(?P<%s>.+?)' % m.group(1),
-            self.path,
-        ).lstrip('/') + '$'
-        self.name = re.sub(  # todo: embetter
-            r'[^a-z0-9]+',
-            '-',
-            self.path,
-            re.I,
-        ).strip('-')
-        self.view_class = type('%sView' % self.name.title(), (PathView,), {
-            'path': self,
-            'api': self.api,
-        })
+from lepo.path import Path
 
 
 class Router:
+    path_class = Path
+
     def __init__(self, api):
         self.api = deepcopy(api)
         self.api.pop('host', None)
@@ -51,7 +30,7 @@ class Router:
     def get_urls(self):
         urls = []
         for path, mapping in self.api['paths'].items():
-            path = Path(api=self, path=path, mapping=mapping)
+            path = self.path_class(api=self, path=path, mapping=mapping)
             urls.append(url(path.regex, path.view_class.as_view(), name=path.name))
         return urls
 
