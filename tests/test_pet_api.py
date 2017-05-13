@@ -29,7 +29,7 @@ def test_post_pet(client, with_tag):
     pet = get_data_from_response(
         client.post(
             '/api/pets',
-            json.dumps(payload).encode('utf-8'),
+            json.dumps(payload),
             content_type='application/json'
         )
     )
@@ -69,7 +69,7 @@ def test_update_pet(client):
     payload = {'name': 'worl', 'tag': 'bunner'}
     resp = client.patch(
         '/api/pets/{}'.format(pet1.id),
-        json.dumps(payload).encode('utf-8'),
+        json.dumps(payload),
         content_type='application/json'
     )
     assert resp.status_code == 200
