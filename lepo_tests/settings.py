@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'lepo_tests',
     'lepo',
+    'lepo_doc',
 ]
 
 MIDDLEWARE = [
