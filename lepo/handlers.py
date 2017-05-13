@@ -1,6 +1,5 @@
-from functools import wraps
-
 from copy import deepcopy
+from functools import wraps
 
 from django.utils.module_loading import import_string
 

@@ -1,7 +1,7 @@
 from functools import reduce
 
 from django.db.models import Q
-from marshmallow import Schema, fields
+from marshmallow import fields, Schema
 
 from lepo.handlers import CRUDModelHandler
 from lepo_tests.models import Pet
