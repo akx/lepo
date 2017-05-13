@@ -2,14 +2,8 @@ from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.views import View
 
+from lepo.api_info import APIInfo
 from lepo.parameters import read_parameters
-
-
-class APIInfo:
-    def __init__(self, api, path, operation):
-        self.api = api
-        self.path = path
-        self.operation = operation
 
 
 class PathView(View):
