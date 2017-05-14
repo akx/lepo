@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/akx/lepo.svg?branch=master)](https://travis-ci.org/akx/lepo) [![Codecov](https://img.shields.io/codecov/c/github/akx/lepo.svg)]()
 
-Lepo is a *contract-first* API framework that enables you to design your API using the OpenAPI specification (formerly known as Swagger) and implement it in Python 3 and Django.
+Lepo is a *contract-first* API framework that enables you to design your API using the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) (formerly known as Swagger) and implement it in Python 3 and [Django](https://www.djangoproject.com/).
 
 What does it mean when we say *contract-first*? Contrast this to *code-first*:
 
@@ -18,7 +18,7 @@ What does it mean when we say *contract-first*? Contrast this to *code-first*:
 
 ## Usage
 
-Write the contract of the first version of your API in the [OpenAPI]() format (formerly know as Swagger). You'll end up with a YAML file popularly called `swagger.yml`.
+Write the contract of the first version of your API in the [OpenAPI format](https://github.com/OAI/OpenAPI-Specification). You'll end up with a YAML file popularly called `swagger.yml`.
 
 ```yaml
 swagger: "2.0"
