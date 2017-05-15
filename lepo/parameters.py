@@ -3,7 +3,7 @@ import json
 import jsonschema
 from django.utils.encoding import force_text
 
-from lepo.excs import ErroneousParameters, MissingParameter
+from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat, MissingParameter
 
 
 def coerce_parameter(api_info, parameter, value):
@@ -26,14 +26,30 @@ def coerce_parameter(api_info, parameter, value):
     return value
 
 
+def read_body(request):
+    consumes = request.api_info.operation.consumes
+    if request.content_type not in consumes:
+        raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
+            request.content_type,
+            consumes,
+        ))
+    try:
+        if request.content_type == 'application/json':
+            return json.loads(request.body.decode(request.content_params.get('charset', 'UTF-8')))
+        elif request.content_type == 'text/plain':
+            return request.body.decode(request.content_params.get('charset', 'UTF-8'))
+    except Exception as exc:
+        raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
+    raise InvalidBodyFormat('This API has no idea how to parse content-type %s' % request.content_type)
+
+
 def get_parameter_value(request, view_kwargs, param):
     if param['in'] == 'query':
         return request.GET[param['name']]
     elif param['in'] == 'path':
         return view_kwargs[param['name']]
     elif param['in'] == 'body':
-        # TODO: support other formats than JSON
-        return json.loads(request.body.decode('UTF-8'))
+        return read_body(request)
     else:
         raise NotImplementedError('unsupported `in` value in %r' % param)
 
