@@ -27,10 +27,21 @@ class Router:
                 data = json.load(infp)
         return cls(data)
 
+    def get_path(self, path):
+        """
+        Construct a Path object from a path string.
+
+        The Path string must be declared in the API.
+
+        :type path: str
+        :rtype: lepo.path.Path
+        """
+        return self.path_class(api=self, path=path, mapping=self.api['paths'][path])
+
     def get_urls(self):
         urls = []
-        for path, mapping in self.api['paths'].items():
-            path = self.path_class(api=self, path=path, mapping=mapping)
+        for path in self.api['paths']:
+            path = self.get_path(path)
             urls.append(url(path.regex, path.view_class.as_view(), name=path.name))
         return urls
 
