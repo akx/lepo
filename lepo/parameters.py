@@ -38,16 +38,16 @@ def get_parameter_value(request, view_kwargs, param):
         raise NotImplementedError('unsupported `in` value in %r' % param)
 
 
-def read_parameters(api_info, request, view_kwargs):
+def read_parameters(request, view_kwargs):
     """
-    :type api_info: APIInfo
+    :param request: HttpRequest with attached api_info
     :type request: HttpRequest
     :type view_kwargs: dict[str, object]
     :rtype: dict[str, object]
     """
     params = {}
     errors = {}
-    for param in api_info.operation.parameters:
+    for param in request.api_info.operation.parameters:
         try:
             value = get_parameter_value(request, view_kwargs, param)
         except KeyError:
@@ -55,7 +55,7 @@ def read_parameters(api_info, request, view_kwargs):
                 raise MissingParameter('parameter %s is required but missing' % param['name'])
             continue
         try:
-            params[param['name']] = coerce_parameter(api_info, param, value)
+            params[param['name']] = coerce_parameter(request.api_info, param, value)
         except Exception as e:
             errors[param['name']] = e
     if errors:

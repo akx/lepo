@@ -17,7 +17,7 @@ class PathView(View):
         except InvalidOperation:
             return self.http_method_not_allowed(request, **kwargs)
         request.api_info = APIInfo(api=self.api, path=self.path, operation=operation)
-        params = read_parameters(request.api_info, request, kwargs)
+        params = read_parameters(request, kwargs)
         handler = self.api.get_handler(operation.id)
         response = handler(request, **params)
         if isinstance(response, HttpResponse):
