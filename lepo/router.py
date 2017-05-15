@@ -19,7 +19,7 @@ class Router:
     @classmethod
     def from_file(cls, filename):
         with open(filename) as infp:
-            if filename.endswith('.yaml'):
+            if filename.endswith('.yaml') or filename.endswith('.yml'):
                 import yaml
                 data = yaml.safe_load(infp)
             else:
