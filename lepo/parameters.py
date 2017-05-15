@@ -47,7 +47,7 @@ def read_parameters(api_info, request, view_kwargs):
     """
     params = {}
     errors = {}
-    for param in api_info.operation['parameters']:
+    for param in api_info.operation.parameters:
         try:
             value = get_parameter_value(request, view_kwargs, param)
         except KeyError:
