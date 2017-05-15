@@ -13,3 +13,11 @@ class MissingHandler(ValueError):
 class ErroneousParameters(Exception):
     def __init__(self, error_map):
         self.errors = error_map
+
+
+class InvalidBodyFormat(ValueError):
+    pass
+
+
+class InvalidBodyContent(ValueError):
+    pass
