@@ -6,10 +6,16 @@ if __name__ == '__main__':
         version='0.0.0',
         url='https://github.com/akx/lepo',
         author='Aarni Koskela',
+        author_email='akx@iki.fi',
         maintainer='Aarni Koskela',
         maintainer_email='akx@iki.fi',
         license='MIT',
         install_requires=['Django', 'openapi', 'marshmallow'],
-        packages=setuptools.find_packages('.', exclude=('lepo_tests', 'tests',)),
+        packages=setuptools.find_packages('.', exclude=(
+            'lepo_tests',
+            'lepo_tests.*',
+            'tests',
+            'tests.*',
+        )),
         include_package_data=True,
     )
