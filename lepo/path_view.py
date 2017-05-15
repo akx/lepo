@@ -3,7 +3,7 @@ from django.http.response import JsonResponse
 from django.views import View
 
 from lepo.api_info import APIInfo
-from lepo.operation import Operation
+from lepo.excs import InvalidOperation
 from lepo.parameters import read_parameters
 
 
@@ -12,10 +12,10 @@ class PathView(View):
     path = None  # Filled in by subclasses
 
     def dispatch(self, request, **kwargs):
-        operation_data = self.path.mapping.get(request.method.lower())
-        if not operation_data:
+        try:
+            operation = self.path.get_operation(request.method)
+        except InvalidOperation:
             return self.http_method_not_allowed(request, **kwargs)
-        operation = Operation(api=self.api, path=self.path, data=operation_data)
         request.api_info = APIInfo(api=self.api, path=self.path, operation=operation)
         params = read_parameters(request.api_info, request, kwargs)
         handler = self.api.get_handler(operation.id)
