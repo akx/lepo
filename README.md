@@ -60,8 +60,7 @@ INSTALLED_APPS = [
 Make a Django app, say `petstore`, add it to `INSTALLED_APPS`, and hook the `swagger.yml` up to your application in `urls.py`:
 
 ```python
-import json
-from pkg_resources import resource_string
+from pkg_resources import resource_filename
 
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -73,7 +72,7 @@ from lepo_doc.urls import get_docs_urls
 from . import views
 
 
-router = Router(json.loads(resource_string(__name__, 'swagger.yml')))
+router = Router.from_file(resource_filename(__name__, 'swagger.yml'))
 router.add_handlers(views)
 
 for error in validate_router(router):
