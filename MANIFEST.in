@@ -1,0 +1,1 @@
+recursive-include lepo_doc *.html *.css *.js
