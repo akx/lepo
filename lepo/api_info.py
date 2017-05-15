@@ -1,10 +1,8 @@
 class APIInfo:
-    def __init__(self, api, path, operation):
+    def __init__(self, operation):
         """
-        :type api: lepo.router.Router
-        :type path: lepo.path.Path
         :type operation: lepo.operation.Operation
         """
-        self.api = api
-        self.path = path
+        self.api = operation.api
+        self.path = operation.path
         self.operation = operation
