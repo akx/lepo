@@ -1,5 +1,7 @@
 import re
 
+from lepo.excs import InvalidOperation
+from lepo.operation import Operation
 from lepo.path_view import PathView
 
 
@@ -23,3 +25,9 @@ class Path:
             'path': self,
             'api': self.api,
         })
+
+    def get_operation(self, method):
+        operation_data = self.mapping.get(method.lower())
+        if not operation_data:
+            raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
+        return Operation(api=self.api, path=self, data=operation_data)

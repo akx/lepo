@@ -2,6 +2,10 @@ class MissingParameter(ValueError):
     pass
 
 
+class InvalidOperation(ValueError):
+    pass
+
+
 class MissingHandler(ValueError):
     pass
 
