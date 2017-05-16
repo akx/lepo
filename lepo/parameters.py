@@ -124,7 +124,7 @@ def read_parameters(request, view_kwargs):
                 params[param['name']] = param['default']
                 continue
             if param.get('required'):  # Required but missing
-                raise MissingParameter('parameter %s is required but missing' % param['name'])
+                errors[param['name']] = MissingParameter('parameter %s is required but missing' % param['name'])
             continue
         try:
             params[param['name']] = cast_parameter_value(request.api_info, param, value)
