@@ -11,8 +11,9 @@ class MissingHandler(ValueError):
 
 
 class ErroneousParameters(Exception):
-    def __init__(self, error_map):
+    def __init__(self, error_map, parameters):
         self.errors = error_map
+        self.parameters = parameters
 
 
 class InvalidBodyFormat(ValueError):

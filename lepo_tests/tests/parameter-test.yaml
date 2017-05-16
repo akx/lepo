@@ -26,3 +26,23 @@ paths:
         items:
           type: string
         collectionFormat: multi
+  /invalid-collection-format:
+    get:
+      parameters:
+      - name: blep
+        type: array
+        in: query
+        items:
+          type: string
+        collectionFormat: quux
+  /add-numbers:
+    get:
+      parameters:
+      - name: a
+        type: integer
+        in: query
+        required: true
+      - name: b
+        type: integer
+        in: query
+        required: true

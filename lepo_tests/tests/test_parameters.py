@@ -58,3 +58,19 @@ def test_required(rf):
     with pytest.raises(ErroneousParameters) as ei:
         read_parameters(request, {})
     assert isinstance(ei.value.errors['greetee'], MissingParameter)
+
+
+def test_invalid_collection_format(rf):
+    request = rf.get('/invalid-collection-format?blep=foo')
+    request.api_info = APIInfo(router.get_path('/invalid-collection-format').get_operation('get'))
+    with pytest.raises(NotImplementedError):
+        read_parameters(request, {})
+
+
+def test_type_casting_errors(rf):
+    request = rf.get('/add-numbers?a=foo&b=8')
+    request.api_info = APIInfo(router.get_path('/add-numbers').get_operation('get'))
+    with pytest.raises(ErroneousParameters) as ei:
+        read_parameters(request, {})
+    assert 'a' in ei.value.errors
+    assert 'b' in ei.value.parameters
