@@ -77,3 +77,8 @@ def test_update_pet(client):
     pet_data = get_data_from_response(client.get('/api/pets'))[0]
     assert pet_data['name'] == 'worl'
     assert pet_data['tag'] == 'bunner'
+
+
+@pytest.mark.django_db
+def test_invalid_operation(client):
+    assert client.patch('/api/pets').status_code == 405
