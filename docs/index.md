@@ -1,6 +1,4 @@
-# Lepo – Contract-first REST APIs in Django
-
-[![Build Status](https://travis-ci.org/akx/lepo.svg?branch=master)](https://travis-ci.org/akx/lepo) [![Codecov](https://img.shields.io/codecov/c/github/akx/lepo.svg)]()
+# Welcome to Lepo
 
 Lepo is a *contract-first* API framework that enables you to design your API using the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) (formerly known as Swagger) and implement it in Python 3 and [Django](https://www.djangoproject.com/).
 
@@ -15,14 +13,6 @@ What does it mean when we say *contract-first*? Contrast this to *code-first*:
 * Body and query parameter validation
 * Output validation
 * Embedded Swagger UI
-
-## Documentation
-
-Please see the [docs](./docs) folder for more extensive documentation.
-
-## Why is it called *lepo*?
-
-*Lepo* is Finnish for *rest*.
 
 ## License
 
