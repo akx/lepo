@@ -37,6 +37,13 @@ def test_files(rf):
     assert isinstance(parameters['file'], UploadedFile)
 
 
+def test_multi(rf):
+    request = rf.get('/multiple-tags?tag=a&tag=b&tag=c')
+    request.api_info = APIInfo(router.get_path('/multiple-tags').get_operation('get'))
+    parameters = read_parameters(request, {})
+    assert parameters['tag'] == ['a', 'b', 'c']
+
+
 def test_default(rf):
     request = rf.get('/greet?greetee=doggo')
     request.api_info = APIInfo(router.get_path('/greet').get_operation('get'))

@@ -17,3 +17,12 @@ paths:
         type: string
         in: query
         required: true
+  /multiple-tags:
+    get:
+      parameters:
+      - name: tag
+        type: array
+        in: query
+        items:
+          type: string
+        collectionFormat: multi
