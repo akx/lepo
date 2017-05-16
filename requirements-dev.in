@@ -2,6 +2,7 @@ autoflake
 autopep8
 flake8
 isort
+mkdocs
 pip-tools
 pytest
 pytest-cov
