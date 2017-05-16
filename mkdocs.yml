@@ -3,3 +3,16 @@ pages:
 - index.md
 - getting-started.md
 - class-based-handlers.md
+theme: material
+markdown_extensions:
+- admonition
+- codehilite
+- pymdownx.tasklist
+- pymdownx.inlinehilite
+extra:
+  palette:
+    primary: 'deep purple'
+    accent: 'indigo'
+repo_name: 'akx/lepo'
+repo_url: 'https://github.com/akx/lepo'
+copyright: 'Copyright &copy; 2017 Lepo authors'
