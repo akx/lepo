@@ -1,4 +1,6 @@
-# Welcome to Lepo
+![](banner.svg)
+
+# Welcome!
 
 Lepo is a *contract-first* API framework that enables you to design your API using the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) (formerly known as Swagger) and implement it in Python 3 and [Django](https://www.djangoproject.com/).
 
