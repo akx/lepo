@@ -35,3 +35,10 @@ def test_files(rf):
     request.api_info = APIInfo(router.get_path('/upload').get_operation('post'))
     parameters = read_parameters(request, {})
     assert isinstance(parameters['file'], UploadedFile)
+
+
+def test_default(rf):
+    request = rf.get('/greet?greetee=doggo')
+    request.api_info = APIInfo(router.get_path('/greet').get_operation('get'))
+    parameters = read_parameters(request, {})
+    assert parameters == {'greeting': 'henlo', 'greetee': 'doggo'}

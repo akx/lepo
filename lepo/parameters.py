@@ -120,7 +120,10 @@ def read_parameters(request, view_kwargs):
         try:
             value = get_parameter_value(request, view_kwargs, param)
         except KeyError:
-            if param.get('required'):
+            if 'default' in param:
+                params[param['name']] = param['default']
+                continue
+            if param.get('required'):  # Required but missing
                 raise MissingParameter('parameter %s is required but missing' % param['name'])
             continue
         try:

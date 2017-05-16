@@ -6,3 +6,14 @@ paths:
       - name: file
         type: file
         in: formData
+  /greet:
+    get:
+      parameters:
+      - name: greeting
+        type: string
+        in: query
+        default: henlo
+      - name: greetee
+        type: string
+        in: query
+        required: true
