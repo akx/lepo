@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import UploadedFile
 from jsonschema import ValidationError
 
 from lepo.api_info import APIInfo
+from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.parameters import cast_parameter_value, read_parameters
 from lepo.router import Router
 from lepo_tests.tests.consts import PARAMETER_TEST_YAML_PATH
@@ -49,3 +50,11 @@ def test_default(rf):
     request.api_info = APIInfo(router.get_path('/greet').get_operation('get'))
     parameters = read_parameters(request, {})
     assert parameters == {'greeting': 'henlo', 'greetee': 'doggo'}
+
+
+def test_required(rf):
+    request = rf.get('/greet')
+    request.api_info = APIInfo(router.get_path('/greet').get_operation('get'))
+    with pytest.raises(ErroneousParameters) as ei:
+        read_parameters(request, {})
+    assert isinstance(ei.value.errors['greetee'], MissingParameter)
