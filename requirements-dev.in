@@ -3,7 +3,10 @@ autopep8
 flake8
 isort
 mkdocs
+mkdocs-material
 pip-tools
+pygments
+pymdown-extensions
 pytest
 pytest-cov
 pytest-django

@@ -15,14 +15,17 @@ flake8==3.3.0
 isort==4.2.5
 jinja2==2.9.6             # via mkdocs
 livereload==2.5.1         # via mkdocs
-markdown==2.6.8           # via mkdocs
+markdown==2.6.8           # via mkdocs, pymdown-extensions
 markupsafe==1.0           # via jinja2
 mccabe==0.6.1             # via flake8
+mkdocs-material==1.6.2
 mkdocs==0.16.3
 pip-tools==1.9.0
 py==1.4.33                # via pytest, pytest-xdist
 pycodestyle==2.3.1        # via autopep8, flake8
 pyflakes==1.5.0           # via autoflake, flake8
+pygments==2.2.0
+pymdown-extensions==3.2
 pytest-cov==2.5.1
 pytest-django==3.1.2
 pytest-xdist==1.16.0
