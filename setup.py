@@ -10,7 +10,7 @@ if __name__ == '__main__':
         maintainer='Aarni Koskela',
         maintainer_email='akx@iki.fi',
         license='MIT',
-        install_requires=['Django', 'openapi', 'marshmallow'],
+        install_requires=['Django', 'iso8601', 'jsonschema', 'marshmallow'],
         packages=setuptools.find_packages('.', exclude=(
             'lepo_tests',
             'lepo_tests.*',
