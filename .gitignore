@@ -8,6 +8,7 @@
 .hypothesis/
 .idea
 .tox/
+/site
 __pycache__/
 build/
 coverage.xml
