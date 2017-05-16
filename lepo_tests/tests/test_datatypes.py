@@ -3,7 +3,7 @@ from datetime import date, datetime
 import pytest
 from iso8601 import UTC
 
-from lepo.parameters import cast_value
+from lepo.parameters import cast_parameter_value, cast_primitive_value
 
 DATA_EXAMPLES = [
     {'spec': {'type': 'integer'}, 'input': '5041211', 'output': 5041211},
@@ -28,5 +28,31 @@ DATA_EXAMPLES = [
 
 @pytest.mark.parametrize('case', DATA_EXAMPLES)
 def test_data(case):
-    parsed = cast_value(case['spec'], case['input'])
+    parsed = cast_primitive_value(case['spec'], case['input'])
     assert parsed == case['output']
+
+
+def test_collection_formats():
+    assert cast_parameter_value(
+        None,
+        {'type': 'array', 'collectionFormat': 'tsv', 'items': {'type': 'boolean'}},
+        'true\ttrue\tfalse',
+    ) == [True, True, False]
+    assert cast_parameter_value(
+        None,
+        {'type': 'array', 'collectionFormat': 'ssv', 'items': {'type': 'string'}},
+        'what it do',
+    ) == ['what', 'it', 'do']
+    assert cast_parameter_value(
+        None,
+        {
+            'type': 'array',
+            'collectionFormat': 'pipes',
+            'items': {
+                'type': 'array',
+                'items': {
+                    'type': 'integer',
+                },
+            }},
+        '1,2,3|4,5,6|7,8,9',
+    ) == [[1, 2, 3], [4, 5, 6], [7, 8, 9]]

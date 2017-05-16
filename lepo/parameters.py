@@ -7,14 +7,24 @@ from django.utils.encoding import force_bytes, force_text
 
 from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat, MissingParameter
 
+COLLECTION_FORMAT_SPLITTERS = {
+    'csv': lambda value: force_text(value).split(','),
+    'ssv': lambda value: force_text(value).split(' '),
+    'tsv': lambda value: force_text(value).split('\t'),
+    'pipes': lambda value: force_text(value).split('|'),
+}
 
-def coerce_parameter(api_info, parameter, value):
-    collection_format = parameter.get('collectionFormat')
-    if collection_format:
-        if collection_format == 'csv':
-            value = force_text(value).split(',')
-        else:
-            raise NotImplementedError('unsupported collection format in %r' % parameter)
+
+def cast_parameter_value(api_info, parameter, value):
+    if parameter.get('type') == 'array':
+        if not isinstance(value, list):  # could be a list already if collection format was multi
+            splitter = COLLECTION_FORMAT_SPLITTERS.get(parameter.get('collectionFormat', 'csv'))
+            if not splitter:
+                raise NotImplementedError('unsupported collection format in %r' % parameter)
+            value = splitter(value)
+        items = parameter['items']
+        value = [cast_parameter_value(api_info, items, item) for item in value]
+        # TODO: Support the rest of `items`: default/maximum/...
     if 'schema' in parameter:
         schema = parameter['schema']
         if '$ref' in schema:
@@ -22,13 +32,13 @@ def coerce_parameter(api_info, parameter, value):
         jsonschema.validate(value, schema)
         return value
     if 'type' in parameter:
-        return cast_value(parameter, value)
+        return cast_primitive_value(parameter, value)
     return value
 
 
-def cast_value(parameter, value):
-    format = parameter.get('format')
-    type = parameter.get('type')
+def cast_primitive_value(spec, value):
+    format = spec.get('format')
+    type = spec.get('type')
     if type == 'boolean':
         return (force_text(value).lower() in ('1', 'yes', 'true'))
     if type == 'integer' or format in ('integer', 'long'):
@@ -67,7 +77,10 @@ def read_body(request):
 
 def get_parameter_value(request, view_kwargs, param):
     if param['in'] == 'query':
-        return request.GET[param['name']]
+        if param.get('type') == 'array' and param.get('collectionFormat') == 'multi':
+            return request.GET.getlist(param['name'])
+        else:
+            return request.GET[param['name']]
     elif param['in'] == 'path':
         return view_kwargs[param['name']]
     elif param['in'] == 'body':
@@ -93,7 +106,7 @@ def read_parameters(request, view_kwargs):
                 raise MissingParameter('parameter %s is required but missing' % param['name'])
             continue
         try:
-            params[param['name']] = coerce_parameter(request.api_info, param, value)
+            params[param['name']] = cast_parameter_value(request.api_info, param, value)
         except Exception as e:
             errors[param['name']] = e
     if errors:
