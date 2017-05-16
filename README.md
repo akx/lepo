@@ -13,7 +13,7 @@ What does it mean when we say *contract-first*? Contrast this to *code-first*:
 
 * Automatic routing of requests to endpoints
 * Body and query parameter validation
-* Output validation
+* Output validation (soon!)
 * Embedded Swagger UI
 
 ## Documentation
