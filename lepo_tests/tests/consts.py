@@ -1,3 +1,5 @@
 import os
 
-PETSTORE_YAML_PATH = os.path.join(os.path.dirname(__file__), 'petstore-expanded.yaml')
+TESTS_DIR = os.path.dirname(__file__)
+PETSTORE_YAML_PATH = os.path.join(TESTS_DIR, 'petstore-expanded.yaml')
+PARAMETER_TEST_YAML_PATH = os.path.join(TESTS_DIR, 'parameter-test.yaml')

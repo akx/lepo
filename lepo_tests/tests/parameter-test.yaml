@@ -1,0 +1,8 @@
+swagger: "2.0"
+paths:
+  /upload:
+    post:
+      parameters:
+      - name: file
+        type: file
+        in: formData

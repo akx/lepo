@@ -91,6 +91,8 @@ def read_body(request):
 
 
 def get_parameter_value(request, view_kwargs, param):
+    if param['in'] == 'formData' and param.get('type') == 'file':
+        return request.FILES[param['name']]
     if param['in'] in ('query', 'formData'):
         source = (request.POST if param['in'] == 'formData' else request.GET)
         if param.get('type') == 'array' and param.get('collectionFormat') == 'multi':
