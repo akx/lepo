@@ -14,8 +14,6 @@ if __name__ == '__main__':
         packages=setuptools.find_packages('.', exclude=(
             'lepo_tests',
             'lepo_tests.*',
-            'tests',
-            'tests.*',
         )),
         include_package_data=True,
     )

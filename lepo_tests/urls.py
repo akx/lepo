@@ -7,7 +7,7 @@ from lepo.router import Router
 from lepo.validate import validate_router
 from lepo_doc.urls import get_docs_urls
 
-router = Router.from_file(os.path.join(os.path.dirname(__file__), '..', 'tests', 'petstore-expanded.yaml'))
+router = Router.from_file(os.path.join(os.path.dirname(__file__), 'tests', 'petstore-expanded.yaml'))
 router.add_handlers('lepo_tests.handlers.pets')
 
 for error in validate_router(router):
