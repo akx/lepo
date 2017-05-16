@@ -14,6 +14,16 @@ COLLECTION_FORMAT_SPLITTERS = {
     'pipes': lambda value: force_text(value).split('|'),
 }
 
+OPENAPI_JSONSCHEMA_VALIDATION_KEYS = (
+    'maximum', 'exclusiveMaximum',
+    'minimum', 'exclusiveMinimum',
+    'maxLength', 'minLength',
+    'pattern',
+    'maxItems', 'minItems',
+    'uniqueItems',
+    'enum', 'multipleOf',
+)
+
 
 def cast_parameter_value(api_info, parameter, value):
     if parameter.get('type') == 'array':
@@ -24,15 +34,20 @@ def cast_parameter_value(api_info, parameter, value):
             value = splitter(value)
         items = parameter['items']
         value = [cast_parameter_value(api_info, items, item) for item in value]
-        # TODO: Support the rest of `items`: default/maximum/...
     if 'schema' in parameter:
         schema = parameter['schema']
         if '$ref' in schema:
             schema = api_info.api.get_schema(schema['$ref'])
         jsonschema.validate(value, schema)
         return value
-    if 'type' in parameter:
-        return cast_primitive_value(parameter, value)
+    value = cast_primitive_value(parameter, value)
+    jsonschema_validation_object = {
+        key: parameter[key]
+        for key in parameter
+        if key in OPENAPI_JSONSCHEMA_VALIDATION_KEYS
+    }
+    if jsonschema_validation_object:
+        jsonschema.validate(value, jsonschema_validation_object)
     return value
 
 
