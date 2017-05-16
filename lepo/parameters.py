@@ -1,7 +1,9 @@
+import base64
 import json
 
+import iso8601
 import jsonschema
-from django.utils.encoding import force_text
+from django.utils.encoding import force_bytes, force_text
 
 from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat, MissingParameter
 
@@ -13,16 +15,36 @@ def coerce_parameter(api_info, parameter, value):
             value = force_text(value).split(',')
         else:
             raise NotImplementedError('unsupported collection format in %r' % parameter)
-    if 'type' in parameter:
-        if parameter['type'] == 'integer':
-            value = int(value)
-        # TODO: copy other bits from the parameter?
-        jsonschema.validate(value, {'type': parameter['type']})
-    elif 'schema' in parameter:
+    if 'schema' in parameter:
         schema = parameter['schema']
         if '$ref' in schema:
             schema = api_info.api.get_schema(schema['$ref'])
         jsonschema.validate(value, schema)
+        return value
+    if 'type' in parameter:
+        return cast_value(parameter, value)
+    return value
+
+
+def cast_value(parameter, value):
+    format = parameter.get('format')
+    type = parameter.get('type')
+    if type == 'boolean':
+        return (force_text(value).lower() in ('1', 'yes', 'true'))
+    if type == 'integer' or format in ('integer', 'long'):
+        return int(value)
+    if type == 'number' or format in ('float', 'double'):
+        return float(value)
+    if format == 'byte':  # base64 encoded characters
+        return base64.b64decode(value)
+    if format == 'binary':  # any sequence of octets
+        return force_bytes(value)
+    if format == 'date':  # ISO8601 date
+        return iso8601.parse_date(value).date()
+    if format == 'dateTime':  # ISO8601 datetime
+        return iso8601.parse_date(value)
+    if type == 'string':
+        return force_text(value)
     return value
 
 
