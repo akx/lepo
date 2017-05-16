@@ -76,11 +76,12 @@ def read_body(request):
 
 
 def get_parameter_value(request, view_kwargs, param):
-    if param['in'] == 'query':
+    if param['in'] in ('query', 'formData'):
+        source = (request.POST if param['in'] == 'formData' else request.GET)
         if param.get('type') == 'array' and param.get('collectionFormat') == 'multi':
-            return request.GET.getlist(param['name'])
+            return source.getlist(param['name'])
         else:
-            return request.GET[param['name']]
+            return source[param['name']]
     elif param['in'] == 'path':
         return view_kwargs[param['name']]
     elif param['in'] == 'body':
