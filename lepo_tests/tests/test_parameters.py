@@ -1,7 +1,12 @@
 import pytest
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import UploadedFile
 from jsonschema import ValidationError
 
+from lepo.api_info import APIInfo
 from lepo.parameters import cast_parameter_value, read_parameters
+from lepo.router import Router
+from lepo_tests.tests.consts import PARAMETER_TEST_YAML_PATH
 
 
 def test_parameter_validation():
@@ -18,3 +23,15 @@ def test_parameter_validation():
             },
             'what it do',
         )
+
+
+router = Router.from_file(PARAMETER_TEST_YAML_PATH)
+
+
+def test_files(rf):
+    request = rf.post('/upload', {
+        'file': ContentFile(b'foo', name='foo.txt'),
+    })
+    request.api_info = APIInfo(router.get_path('/upload').get_operation('post'))
+    parameters = read_parameters(request, {})
+    assert isinstance(parameters['file'], UploadedFile)
