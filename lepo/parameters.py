@@ -87,7 +87,7 @@ def read_body(request):
             return request.body.decode(request.content_params.get('charset', 'UTF-8'))
     except Exception as exc:
         raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
-    raise InvalidBodyFormat('This API has no idea how to parse content-type %s' % request.content_type)
+    raise NotImplementedError('No idea how to parse content-type %s' % request.content_type)  # pragma: no cover
 
 
 def get_parameter_value(request, view_kwargs, param):
@@ -103,8 +103,7 @@ def get_parameter_value(request, view_kwargs, param):
         return view_kwargs[param['name']]
     elif param['in'] == 'body':
         return read_body(request)
-    else:
-        raise NotImplementedError('unsupported `in` value in %r' % param)
+    raise NotImplementedError('unsupported `in` value in %r' % param)  # pragma: no cover
 
 
 def read_parameters(request, view_kwargs):
@@ -128,8 +127,10 @@ def read_parameters(request, view_kwargs):
             continue
         try:
             params[param['name']] = cast_parameter_value(request.api_info, param, value)
+        except NotImplementedError:
+            raise
         except Exception as e:
             errors[param['name']] = e
     if errors:
-        raise ErroneousParameters(errors)
+        raise ErroneousParameters(errors, params)
     return params

@@ -3,6 +3,7 @@ import json
 import pytest
 from django.utils.crypto import get_random_string
 
+from lepo.excs import InvalidBodyFormat, InvalidBodyContent
 from lepo_tests.models import Pet
 
 
@@ -82,3 +83,23 @@ def test_update_pet(client):
 @pytest.mark.django_db
 def test_invalid_operation(client):
     assert client.patch('/api/pets').status_code == 405
+
+
+@pytest.mark.django_db
+def test_invalid_body_format(client):
+    with pytest.raises(InvalidBodyFormat):
+        client.post(
+            '/api/pets',
+            b'<pet></pet>',
+            content_type='application/xml'
+        )
+
+
+@pytest.mark.django_db
+def test_invalid_body_content(client):
+    with pytest.raises(InvalidBodyContent):
+        client.post(
+            '/api/pets',
+            b'{',
+            content_type='application/json'
+        )
