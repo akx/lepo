@@ -21,6 +21,41 @@
             "title": "License"
         },
         {
+            "location": "/features/",
+            "text": "Features\n\n\nFeatures marked with a checkbox are supported.\n\n\nThose without a checkbox aren't guaranteed to be supported.\n\n\nThe absence or presence of a feature here does not directly mean it will or won't be implemented,\nso this document also serves as a TODO list of sorts.\n\n\nPlatform features\n\n\n\n\n DRY API error handling\n\n\n DRY authentication and authorization\n\n\n DRY pagination\n\n\n\n\nOpenAPI Features\n\n\nThis list was built by manually scanning down the OpenAPI specification, so omissions are entirely possible.\n\n\n\n\n Path \n$ref\ns\n\n\n Path-level \nconsumes\n/\nproduces\n definitions\n\n\n Operation-level \nconsumes\n/\nproduces\n definitions\n\n\n References outside a single OpenAPI file (\"Relative Files With Embedded Schema\")\n\n\n\n\nParameters\n\n\n\n\n Path-level \nparameter\n definitions\n\n\n Operation-level \nparameter\n definitions\n\n\n Parameters in paths\n\n\n Parameters in query string\n\n\n Parameters in HTTP headers\n\n\n Parameters in HTTP body\n\n\n Primitive parameters in HTTP body\n\n\n Parameters in HTTP form data\n\n\n Body-type parameter schema validation\n\n\n Parameter type/format validation\n\n\n Parameter \nallowEmptyValue\n\n\n Parameter CSV/SSV/TSV/Pipes collection formats\n\n\n Parameter multi collection format\n\n\n Parameter defaults\n\n\n Parameter extended validation (\nmaximum\n/...)\n\n\n Parameter array \nitems\n validation\n\n\n Parameter Definitions Objects\n\n\n\n\nResponses\n\n\n\n\n Operation response validation\n\n\n Operation response \n$ref\ns\n\n\n Operation response schema validation\n\n\n \nfile\n as operation response schema type\n\n\n Responses Definitions Objects\n\n\n Headers validation\n\n\n\n\nSecurity\n\n\n\n\n Operation security declarations\n\n\n Security Definitions Objects",
+            "title": "Features"
+        },
+        {
+            "location": "/features/#features",
+            "text": "Features marked with a checkbox are supported.  Those without a checkbox aren't guaranteed to be supported.  The absence or presence of a feature here does not directly mean it will or won't be implemented,\nso this document also serves as a TODO list of sorts.",
+            "title": "Features"
+        },
+        {
+            "location": "/features/#platform-features",
+            "text": "DRY API error handling   DRY authentication and authorization   DRY pagination",
+            "title": "Platform features"
+        },
+        {
+            "location": "/features/#openapi-features",
+            "text": "This list was built by manually scanning down the OpenAPI specification, so omissions are entirely possible.    Path  $ref s   Path-level  consumes / produces  definitions   Operation-level  consumes / produces  definitions   References outside a single OpenAPI file (\"Relative Files With Embedded Schema\")",
+            "title": "OpenAPI Features"
+        },
+        {
+            "location": "/features/#parameters",
+            "text": "Path-level  parameter  definitions   Operation-level  parameter  definitions   Parameters in paths   Parameters in query string   Parameters in HTTP headers   Parameters in HTTP body   Primitive parameters in HTTP body   Parameters in HTTP form data   Body-type parameter schema validation   Parameter type/format validation   Parameter  allowEmptyValue   Parameter CSV/SSV/TSV/Pipes collection formats   Parameter multi collection format   Parameter defaults   Parameter extended validation ( maximum /...)   Parameter array  items  validation   Parameter Definitions Objects",
+            "title": "Parameters"
+        },
+        {
+            "location": "/features/#responses",
+            "text": "Operation response validation   Operation response  $ref s   Operation response schema validation    file  as operation response schema type   Responses Definitions Objects   Headers validation",
+            "title": "Responses"
+        },
+        {
+            "location": "/features/#security",
+            "text": "Operation security declarations   Security Definitions Objects",
+            "title": "Security"
+        },
+        {
             "location": "/getting-started/",
             "text": "Getting started\n\n\nWrite the contract of the first version of your API in the \nOpenAPI format\n. You'll end up with a YAML file popularly called \nswagger.yml\n.\n\n\nswagger\n:\n \n\"2.0\"\n\n\ninfo\n:\n\n  \nversion\n:\n \n0.0.1\n\n  \ntitle\n:\n \nLepo Petstore\n\n  \ndescription\n:\n \nA sample API that uses a petstore as an example to \u2026\n\n\nhost\n:\n \nlocalhost:8000\n\n\nbasePath\n:\n \n/api\n\n\nschemes\n:\n\n  \n-\n \nhttp\n\n\nconsumes\n:\n\n  \n-\n \napplication/json\n\n\nproduces\n:\n\n  \n-\n \napplication/json\n\n\npaths\n:\n\n  \n/pets\n:\n\n    \nget\n:\n\n      \ndescription\n:\n \n|\n\n        \nReturns all pets from the system that the user has access to\n\n      \noperationId\n:\n \nfindPets\n\n      \nresponses\n:\n\n        \n200\n:\n\n          \ndescription\n:\n \nGreat success.\n\n\n\n\n\n\nNote the \noperationId\n field. It's converted from camel case to snake case (\nfindPets\n becomes \nfind_pets\n) and used to route an API call to the correct handler (or \nview\n in Django lingo).\n\n\nAdd \nlepo\n to your \nINSTALLED_APPS\n. If you want to use the Swagger UI, also add \nlepo_docs\n.\n\n\nINSTALLED_APPS\n \n=\n \n[\n\n    \n# \u2026\n\n    \n'lepo'\n,\n\n    \n'lepo_doc'\n,\n\n\n]\n\n\n\n\n\n\nMake a Django app, say \npetstore\n, add it to \nINSTALLED_APPS\n, and hook the \nswagger.yml\n up to your application in \nurls.py\n:\n\n\nfrom\n \npkg_resources\n \nimport\n \nresource_filename\n\n\n\nfrom\n \ndjango.conf.urls\n \nimport\n \ninclude\n,\n \nurl\n\n\nfrom\n \ndjango.contrib\n \nimport\n \nadmin\n\n\n\nfrom\n \nlepo.router\n \nimport\n \nRouter\n\n\nfrom\n \nlepo.validate\n \nimport\n \nvalidate_router\n\n\nfrom\n \nlepo_doc.urls\n \nimport\n \nget_docs_urls\n\n\n\nfrom\n \n.\n \nimport\n \nviews\n\n\n\n\nrouter\n \n=\n \nRouter\n.\nfrom_file\n(\nresource_filename\n(\n__name__\n,\n \n'swagger.yml'\n))\n\n\nrouter\n.\nadd_handlers\n(\nviews\n)\n\n\n\nfor\n \nerror\n \nin\n \nvalidate_router\n(\nrouter\n):\n\n    \nprint\n(\n'Validation error:'\n,\n \nerror\n)\n\n\n\nurlpatterns\n \n=\n \n[\n\n    \nurl\n(\nr\n'^admin/'\n,\n \nadmin\n.\nsite\n.\nurls\n),\n\n    \nurl\n(\nr\n'^api/'\n,\n \ninclude\n(\nrouter\n.\nget_urls\n(),\n \n'api'\n)),\n\n    \nurl\n(\nr\n'^api/'\n,\n \ninclude\n(\nget_docs_urls\n(\nrouter\n,\n \n'api-docs'\n),\n \n'api-docs'\n)),\n\n\n]\n\n\n\n\n\n\nObserve it is your responsibility to mount the API at the correct base path. Lepo does not read \nbasePath\n from your \nswagger.yml\n.\n\n\nFinally, implement the operations in \npetstore/views.py\n:\n\n\nfrom\n \ndjango.http\n \nimport\n \nJSONResponse\n\n\n\ndef\n \nfind_pets\n(\nrequest\n):\n\n    \nreturn\n \nJSONResponse\n({\n'pets'\n:\n \n[]})",
             "title": "Getting started"
