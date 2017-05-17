@@ -1,13 +1,14 @@
 site_name: Lepo
 pages:
 - index.md
+- features.md
 - getting-started.md
 - class-based-handlers.md
 theme: material
 markdown_extensions:
 - admonition
 - codehilite
-- pymdownx.tasklist
+- pymdownx.tasklist(custom_checkbox=true)
 - pymdownx.inlinehilite
 extra:
   palette:
