@@ -43,7 +43,8 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 * [x] Parameter defaults
 * [x] Parameter extended validation (`maximum`/...)
 * [x] Parameter array `items` validation
-* [ ] Parameter Definitions Objects
+* [x] Parameter Definitions Objects
+* [x] Parameter `$ref`s
 
 ### Responses
 

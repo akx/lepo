@@ -2,6 +2,8 @@ from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
+from lepo.utils import maybe_resolve
+
 
 class Operation:
     def __init__(self, api, path, data):
@@ -23,6 +25,8 @@ class Operation:
         """
         Combined path-level and operation-level parameters.
 
+        Any $refs are resolved here.
+
         Note that this implementation differs from the spec in that we only use
         the _name_ of a parameter to consider its uniqueness, not the name and location.
 
@@ -31,13 +35,16 @@ class Operation:
 
         :rtype: list[dict]
         """
+
         parameters = OrderedDict()
         for source in (
             self.path.mapping.get('parameters', ()),
             self.data.get('parameters', {}),
         ):
             for parameter in source:
+                parameter = maybe_resolve(parameter, self.api.resolve_reference)
                 parameters[parameter['name']] = parameter
+
         return list(parameters.values())
 
     def _get_overridable(self, key, default=None):
