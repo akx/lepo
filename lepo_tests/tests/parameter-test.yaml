@@ -46,3 +46,10 @@ paths:
         type: integer
         in: query
         required: true
+  /header-parameter:
+    get:
+      parameters:
+      - name: token
+        type: string
+        in: header
+        required: true

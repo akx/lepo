@@ -93,16 +93,23 @@ def read_body(request):
 def get_parameter_value(request, view_kwargs, param):
     if param['in'] == 'formData' and param.get('type') == 'file':
         return request.FILES[param['name']]
+
     if param['in'] in ('query', 'formData'):
         source = (request.POST if param['in'] == 'formData' else request.GET)
         if param.get('type') == 'array' and param.get('collectionFormat') == 'multi':
             return source.getlist(param['name'])
         else:
             return source[param['name']]
-    elif param['in'] == 'path':
+
+    if param['in'] == 'path':
         return view_kwargs[param['name']]
-    elif param['in'] == 'body':
+
+    if param['in'] == 'body':
         return read_body(request)
+
+    if param['in'] == 'header':
+        return request.META['HTTP_%s' % param['name'].upper().replace('-', '_')]
+
     raise NotImplementedError('unsupported `in` value in %r' % param)  # pragma: no cover
 
 
