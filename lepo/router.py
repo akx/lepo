@@ -3,6 +3,7 @@ from importlib import import_module
 
 from django.conf.urls import url
 from django.utils.text import camel_case_to_spaces
+from jsonschema import RefResolver
 
 from lepo.excs import MissingHandler
 from lepo.path import Path
@@ -15,6 +16,7 @@ class Router:
         self.api = deepcopy(api)
         self.api.pop('host', None)
         self.handlers = {}
+        self.resolver = RefResolver('', self.api)
 
     @classmethod
     def from_file(cls, filename):
@@ -67,8 +69,6 @@ class Router:
             except:
                 pass
 
-    def get_schema(self, ref):
-        # TODO: This is not very skookum.
-        for name, schema in self.api.get('definitions', {}).items():
-            if ref == '#/definitions/%s' % name:
-                return schema
+    def resolve_reference(self, ref):
+        url, resolved = self.resolver.resolve(ref)
+        return resolved
