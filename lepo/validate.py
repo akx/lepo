@@ -1,4 +1,8 @@
+from lepo.excs import RouterValidationError
+
+
 def validate_router(router):
+    errors = {}
     operations = set()
     for path in router.api['paths'].values():
         for mapping in path.values():
@@ -7,4 +11,6 @@ def validate_router(router):
         try:
             router.get_handler(operation)
         except Exception as e:
-            yield e
+            errors[operation] = e
+    if errors:
+        raise RouterValidationError(errors)

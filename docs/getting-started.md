@@ -56,9 +56,7 @@ from . import views
 
 router = Router.from_file(resource_filename(__name__, 'swagger.yml'))
 router.add_handlers(views)
-
-for error in validate_router(router):
-    print('Validation error:', error)
+validate_router(router)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

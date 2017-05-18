@@ -9,9 +9,7 @@ from lepo_doc.urls import get_docs_urls
 
 router = Router.from_file(os.path.join(os.path.dirname(__file__), 'tests', 'petstore-expanded.yaml'))
 router.add_handlers('lepo_tests.handlers.pets')
-
-for error in validate_router(router):
-    print('Validation error:', error)
+validate_router(router)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

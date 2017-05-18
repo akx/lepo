@@ -5,6 +5,7 @@ consumes:
 paths:
   /cat:
     post:
+      operationId: emkitten
       parameters:
         - name: cat
           in: body
@@ -12,6 +13,7 @@ paths:
             $ref: '#/definitions/Cat'
   /pet:
     post:
+      operationId: pet a pet
       parameters:
         - name: pet
           in: body
