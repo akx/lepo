@@ -6,6 +6,7 @@ import jsonschema
 from django.utils.encoding import force_bytes, force_text
 
 from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat, MissingParameter
+from lepo.utils import maybe_resolve
 
 COLLECTION_FORMAT_SPLITTERS = {
     'csv': lambda value: force_text(value).split(','),
@@ -35,9 +36,7 @@ def cast_parameter_value(api_info, parameter, value):
         items = parameter['items']
         value = [cast_parameter_value(api_info, items, item) for item in value]
     if 'schema' in parameter:
-        schema = parameter['schema']
-        if '$ref' in schema:
-            schema = api_info.api.get_schema(schema['$ref'])
+        schema = maybe_resolve(parameter['schema'], api_info.api.resolve_reference)
         jsonschema.validate(value, schema)
         return value
     value = cast_primitive_value(parameter, value)
