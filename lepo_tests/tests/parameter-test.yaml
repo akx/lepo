@@ -80,6 +80,10 @@ paths:
     get:
       parameters:
         - $ref: '#/parameters/age'
+  /parameters-reference:
+    get:
+      parameters:
+        $ref: '#/paths/~1parameter-reference/get/parameters'
 parameters:
   age:
     name: age

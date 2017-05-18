@@ -41,6 +41,7 @@ class Operation:
             self.path.mapping.get('parameters', ()),
             self.data.get('parameters', {}),
         ):
+            source = maybe_resolve(source, self.api.resolve_reference)
             for parameter in source:
                 parameter = maybe_resolve(parameter, self.api.resolve_reference)
                 parameters[parameter['name']] = parameter
