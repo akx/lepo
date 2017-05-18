@@ -28,7 +28,8 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 ### Definitions
 
 * [x] `$ref`s in definitions
-* [ ] Model polymorphism (schema `discriminator` field)
+* [x] Model polymorphism (schema `discriminator` field)
+* [ ] Population of default values within models
 
 ### Parameters
 
