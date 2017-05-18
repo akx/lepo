@@ -45,6 +45,7 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 * [x] Parameter array `items` validation
 * [x] Parameter Definitions Objects
 * [x] Parameter `$ref`s
+* [x] Replacement of entire `parameters` objects with `$ref`s
 
 ### Responses
 

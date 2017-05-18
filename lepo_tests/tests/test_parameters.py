@@ -96,3 +96,10 @@ def test_parameter_ref(rf):
     request = rf.get('/parameter-reference?age=86')
     request.api_info = APIInfo(router.get_path('/parameter-reference').get_operation('get'))
     assert read_parameters(request, {}) == {'age': 86}
+
+
+def test_parameters_ref(rf):
+    # /parameters-reference refers the entire parameters object from parameter-reference, so the test is equivalent
+    request = rf.get('/parameters-reference?age=86')
+    request.api_info = APIInfo(router.get_path('/parameters-reference').get_operation('get'))
+    assert read_parameters(request, {}) == {'age': 86}
