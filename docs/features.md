@@ -31,7 +31,7 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 * [x] Operation-level `parameter` definitions
 * [x] Parameters in paths
 * [x] Parameters in query string
-* [ ] Parameters in HTTP headers
+* [x] Parameters in HTTP headers
 * [x] Parameters in HTTP body
 * [x] Primitive parameters in HTTP body
 * [x] Parameters in HTTP form data

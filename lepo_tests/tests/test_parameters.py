@@ -74,3 +74,11 @@ def test_type_casting_errors(rf):
         read_parameters(request, {})
     assert 'a' in ei.value.errors
     assert 'b' in ei.value.parameters
+
+
+def test_header_parameter(rf):
+    # Too bad there isn't a "requests"-like interface for testing that didn't
+    # work by creating a `WSGIRequest` environment... Would be more truthful to test with something like that.
+    request = rf.get('/header-parameter?blep=foo', HTTP_TOKEN='foo')
+    request.api_info = APIInfo(router.get_path('/header-parameter').get_operation('get'))
+    assert read_parameters(request, {})['token'] == 'foo'
