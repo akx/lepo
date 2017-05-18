@@ -53,3 +53,26 @@ paths:
         type: string
         in: header
         required: true
+  /cascade-parameters:
+    parameters:
+      - name: a
+        type: integer
+        in: query
+        required: true
+    get:
+      parameters:
+        - name: b
+          type: integer
+          in: query
+          required: true
+  /cascade-parameter-override:
+    parameters:
+      - name: a
+        type: integer
+        in: query
+    get:
+      parameters:
+        - name: a
+          type: string
+          in: query
+          required: true

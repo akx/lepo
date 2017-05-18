@@ -27,7 +27,7 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 
 ### Parameters
 
-* [ ] Path-level `parameter` definitions
+* [x] Path-level `parameter` definitions
 * [x] Operation-level `parameter` definitions
 * [x] Parameters in paths
 * [x] Parameters in query string

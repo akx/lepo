@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.utils.functional import cached_property
 
 
@@ -16,9 +18,27 @@ class Operation:
     def id(self):
         return self.data['operationId']
 
-    @property
+    @cached_property
     def parameters(self):
-        return self.data.get('parameters', ())
+        """
+        Combined path-level and operation-level parameters.
+
+        Note that this implementation differs from the spec in that we only use
+        the _name_ of a parameter to consider its uniqueness, not the name and location.
+
+        This is because we end up passing parameters to the handler by name anyway,
+        so any duplicate names, even if they had different locations, would be horribly mangled.
+
+        :rtype: list[dict]
+        """
+        parameters = OrderedDict()
+        for source in (
+            self.path.mapping.get('parameters', ()),
+            self.data.get('parameters', {}),
+        ):
+            for parameter in source:
+                parameters[parameter['name']] = parameter
+        return list(parameters.values())
 
     def _get_overridable(self, key, default=None):
         # TODO: This probes a little too deeply into the specifics of these objects, I think...
