@@ -82,3 +82,12 @@ def test_header_parameter(rf):
     request = rf.get('/header-parameter?blep=foo', HTTP_TOKEN='foo')
     request.api_info = APIInfo(router.get_path('/header-parameter').get_operation('get'))
     assert read_parameters(request, {})['token'] == 'foo'
+
+
+def test_parameter_cascade(rf):
+    request = rf.get('/cascade-parameters?a=7&b=10')
+    request.api_info = APIInfo(router.get_path('/cascade-parameters').get_operation('get'))
+    assert read_parameters(request, {}) == {'a': 7, 'b': 10}
+    request = rf.get('/cascade-parameter-override?a=yylmao')
+    request.api_info = APIInfo(router.get_path('/cascade-parameter-override').get_operation('get'))
+    assert read_parameters(request, {}) == {'a': 'yylmao'}  # this would fail in the typecast if override didn't work
