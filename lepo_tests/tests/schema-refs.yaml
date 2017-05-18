@@ -1,0 +1,55 @@
+# via https://github.com/OAI/OpenAPI-Specification/blob/ae9322eb2df1555acf3163e30cd84779d98afec5/versions/2.0.md#models-with-polymorphism-support
+swagger: "2.0"
+consumes:
+- application/json
+paths:
+  /cat:
+    post:
+      parameters:
+        - name: cat
+          in: body
+          schema:
+            $ref: '#/definitions/Cat'
+definitions:
+  Pet:
+    type: object
+    discriminator: petType  # TODO: Unsupported
+    properties:
+      name:
+        type: string
+      petType:
+        type: string
+    required:
+    - name
+    - petType
+  Cat:
+    description: A representation of a cat
+    allOf:
+    - $ref: '#/definitions/Pet'
+    - type: object
+      properties:
+        huntingSkill:
+          type: string
+          description: The measured skill for hunting
+          default: lazy
+          enum:
+          - clueless
+          - lazy
+          - adventurous
+          - aggressive
+      required:
+      - huntingSkill
+  Dog:
+    description: A representation of a dog
+    allOf:
+    - $ref: '#/definitions/Pet'
+    - type: object
+      properties:
+        packSize:
+          type: integer
+          format: int32
+          description: the size of the pack the dog is from
+          default: 0
+          minimum: 0
+      required:
+      - packSize

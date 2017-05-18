@@ -25,6 +25,11 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 * [x] Operation-level `consumes`/`produces` definitions
 * [ ] References outside a single OpenAPI file ("Relative Files With Embedded Schema")
 
+### Definitions
+
+* [x] `$ref`s in definitions
+* [ ] Model polymorphism (schema `discriminator` field)
+
 ### Parameters
 
 * [x] Path-level `parameter` definitions
