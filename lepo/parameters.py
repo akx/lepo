@@ -37,7 +37,7 @@ def cast_parameter_value(api_info, parameter, value):
         value = [cast_parameter_value(api_info, items, item) for item in value]
     if 'schema' in parameter:
         schema = maybe_resolve(parameter['schema'], api_info.api.resolve_reference)
-        jsonschema.validate(value, schema)
+        jsonschema.validate(value, schema, resolver=api_info.api.resolver)
         return value
     value = cast_primitive_value(parameter, value)
     jsonschema_validation_object = {
