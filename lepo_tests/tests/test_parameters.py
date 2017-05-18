@@ -91,3 +91,9 @@ def test_parameter_cascade(rf):
     request = rf.get('/cascade-parameter-override?a=yylmao')
     request.api_info = APIInfo(router.get_path('/cascade-parameter-override').get_operation('get'))
     assert read_parameters(request, {}) == {'a': 'yylmao'}  # this would fail in the typecast if override didn't work
+
+
+def test_parameter_ref(rf):
+    request = rf.get('/parameter-reference?age=86')
+    request.api_info = APIInfo(router.get_path('/parameter-reference').get_operation('get'))
+    assert read_parameters(request, {}) == {'age': 86}

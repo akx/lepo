@@ -76,3 +76,13 @@ paths:
           type: string
           in: query
           required: true
+  /parameter-reference:
+    get:
+      parameters:
+        - $ref: '#/parameters/age'
+parameters:
+  age:
+    name: age
+    in: query
+    type: integer
+    minimum: 0
