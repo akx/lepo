@@ -6,8 +6,7 @@ from jsonschema import ValidationError
 from lepo.api_info import APIInfo
 from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.parameters import cast_parameter_value, read_parameters
-from lepo.router import Router
-from lepo_tests.tests.consts import PARAMETER_TEST_YAML_PATH
+from lepo_tests.tests.utils import get_router
 
 
 def test_parameter_validation():
@@ -26,7 +25,7 @@ def test_parameter_validation():
         )
 
 
-router = Router.from_file(PARAMETER_TEST_YAML_PATH)
+router = get_router('parameter-test.yaml')
 
 
 def test_files(rf):
