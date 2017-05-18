@@ -237,6 +237,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#definitions" title="Definitions" class="md-nav__link">
+    Definitions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#parameters" title="Parameters" class="md-nav__link">
     Parameters
   </a>
@@ -331,6 +338,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#definitions" title="Definitions" class="md-nav__link">
+    Definitions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#parameters" title="Parameters" class="md-nav__link">
     Parameters
   </a>
@@ -385,18 +399,24 @@ so this document also serves as a TODO list of sorts.</p>
 <h2 id="openapi-features">OpenAPI Features</h2>
 <p>This list was built by manually scanning down the OpenAPI specification, so omissions are entirely possible.</p>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Path <code class="codehilite">$ref</code>s</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Path <code class="codehilite">$ref</code>s</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Path-level <code class="codehilite">consumes</code>/<code class="codehilite">produces</code> definitions</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Operation-level <code class="codehilite">consumes</code>/<code class="codehilite">produces</code> definitions</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> References outside a single OpenAPI file ("Relative Files With Embedded Schema")</li>
 </ul>
+<h3 id="definitions">Definitions</h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <code class="codehilite">$ref</code>s in definitions</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Model polymorphism (schema <code class="codehilite">discriminator</code> field)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Population of default values within models</li>
+</ul>
 <h3 id="parameters">Parameters</h3>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Path-level <code class="codehilite">parameter</code> definitions</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Path-level <code class="codehilite">parameter</code> definitions</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Operation-level <code class="codehilite">parameter</code> definitions</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameters in paths</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameters in query string</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Parameters in HTTP headers</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameters in HTTP headers</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameters in HTTP body</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Primitive parameters in HTTP body</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameters in HTTP form data</li>
@@ -408,7 +428,9 @@ so this document also serves as a TODO list of sorts.</p>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameter defaults</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameter extended validation (<code class="codehilite">maximum</code>/...)</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameter array <code class="codehilite">items</code> validation</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Parameter Definitions Objects</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameter Definitions Objects</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Parameter <code class="codehilite">$ref</code>s</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Replacement of entire <code class="codehilite">parameters</code> objects with <code class="codehilite">$ref</code>s</li>
 </ul>
 <h3 id="responses">Responses</h3>
 <ul class="task-list">
