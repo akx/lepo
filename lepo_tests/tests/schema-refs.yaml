@@ -10,10 +10,17 @@ paths:
           in: body
           schema:
             $ref: '#/definitions/Cat'
+  /pet:
+    post:
+      parameters:
+        - name: pet
+          in: body
+          schema:
+            $ref: '#/definitions/Pet'
 definitions:
   Pet:
     type: object
-    discriminator: petType  # TODO: Unsupported
+    discriminator: petType
     properties:
       name:
         type: string
