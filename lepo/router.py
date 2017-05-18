@@ -7,6 +7,7 @@ from jsonschema import RefResolver
 
 from lepo.excs import MissingHandler
 from lepo.path import Path
+from lepo.utils import maybe_resolve
 
 
 class Router:
@@ -38,7 +39,8 @@ class Router:
         :type path: str
         :rtype: lepo.path.Path
         """
-        return self.path_class(api=self, path=path, mapping=self.api['paths'][path])
+        mapping = maybe_resolve(self.api['paths'][path], self.resolve_reference)
+        return self.path_class(api=self, path=path, mapping=mapping)
 
     def get_urls(self):
         urls = []

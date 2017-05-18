@@ -20,7 +20,7 @@ OpenAPI Features
 
 This list was built by manually scanning down the OpenAPI specification, so omissions are entirely possible.
 
-* [ ] Path `$ref`s
+* [x] Path `$ref`s
 * [x] Path-level `consumes`/`produces` definitions
 * [x] Operation-level `consumes`/`produces` definitions
 * [ ] References outside a single OpenAPI file ("Relative Files With Embedded Schema")
