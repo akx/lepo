@@ -4,6 +4,9 @@ from lepo.excs import InvalidOperation
 from lepo.operation import Operation
 from lepo.path_view import PathView
 
+# As defined in the documentation for Path Items:
+METHODS = {'get', 'put', 'post', 'delete', 'options', 'head', 'patch'}
+
 
 class Path:
     def __init__(self, api, path, mapping):
@@ -30,4 +33,9 @@ class Path:
         operation_data = self.mapping.get(method.lower())
         if not operation_data:
             raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
-        return Operation(api=self.api, path=self, data=operation_data)
+        return Operation(api=self.api, path=self, data=operation_data, method=method)
+
+    def get_operations(self):
+        for method in METHODS:
+            if method in self.mapping:
+                yield self.get_operation(method)
