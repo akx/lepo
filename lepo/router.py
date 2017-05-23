@@ -42,10 +42,13 @@ class Router:
         mapping = maybe_resolve(self.api['paths'][path], self.resolve_reference)
         return self.path_class(api=self, path=path, mapping=mapping)
 
+    def get_paths(self):
+        for path in self.api['paths']:
+            yield self.get_path(path)
+
     def get_urls(self):
         urls = []
-        for path in self.api['paths']:
-            path = self.get_path(path)
+        for path in self.get_paths():
             urls.append(url(path.regex, path.view_class.as_view(), name=path.name))
         return urls
 
