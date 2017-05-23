@@ -6,14 +6,16 @@ from lepo.utils import maybe_resolve
 
 
 class Operation:
-    def __init__(self, api, path, data):
+    def __init__(self, api, path, method, data):
         """
         :type api: lepo.router.Router
         :type path: lepo.path.Path
+        :type method: str
         :type data: dict
         """
         self.api = api
         self.path = path
+        self.method = method
         self.data = data
 
     @property
