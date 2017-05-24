@@ -13,6 +13,6 @@ validate_router(router)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include(router.get_urls(), 'api')),
+    url(r'^api/', include(router.get_urls(optional_trailing_slash=True), 'api')),
     url(r'^api/', include(get_docs_urls(router, 'api-docs'), 'api-docs')),
 ]

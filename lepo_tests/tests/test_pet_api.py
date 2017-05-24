@@ -19,6 +19,10 @@ def test_get_empty_list(client):
 
 
 @pytest.mark.django_db
+def test_optional_trailing_slash(client):
+    assert get_data_from_response(client.get('/api/pets/')) == []
+
+@pytest.mark.django_db
 @pytest.mark.parametrize('with_tag', (False, True))
 def test_post_pet(client, with_tag):
     payload = {
