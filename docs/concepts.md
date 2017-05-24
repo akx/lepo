@@ -20,6 +20,8 @@ aside from a few significant differences:
 * `request` is the _only_ positional argument passed to a handler;
   the other arguments are mapped from the OpenAPI operation's parameters
   and passed in as keyword arguments (converted to `snake_case`).
+* The handler may return, for convenience, a 2-tuple of the format
+  `(status, data)`, instead of the conventional `HTTPResponse` object.
 
 ### Exception Handling
 

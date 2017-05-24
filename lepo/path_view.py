@@ -31,7 +31,13 @@ class PathView(View):
         return self.transform_response(response)
 
     def transform_response(self, response):
-        if isinstance(response, HttpResponse):
+        status = 200
+        if isinstance(response, tuple):
+            if len(response) != 2:
+                raise ValueError('If a tuple is returned from a handler, it must be a 2-tuple')
+            status = int(response[0])
+            response = response[1]
+        elif isinstance(response, HttpResponse):
             # TODO: validate against responses
             return response
-        return JsonResponse(response, safe=False)  # TODO: maybe less TIMTOWDI here?
+        return JsonResponse(response, safe=False, status=status)  # TODO: maybe less TIMTOWDI here?
