@@ -1,13 +1,20 @@
+from collections import Iterable
 from copy import deepcopy
+from functools import reduce
 from importlib import import_module
 
 from django.conf.urls import url
+from django.http import HttpResponse
 from django.utils.text import camel_case_to_spaces
 from jsonschema import RefResolver
 
 from lepo.excs import MissingHandler
 from lepo.path import Path
 from lepo.utils import maybe_resolve
+
+
+def root_view(request):
+    return HttpResponse('API root')
 
 
 class Router:
@@ -46,10 +53,55 @@ class Router:
         for path in self.api['paths']:
             yield self.get_path(path)
 
-    def get_urls(self):
+    def get_urls(
+        self,
+        root_view_name=None,
+        optional_trailing_slash=False,
+        decorate=(),
+        name_template='{name}',
+    ):
+        """
+        Get the router's URLs, ready to be installed in `urlpatterns` (directly or via `include`).
+
+        :param root_view_name: The optional url name for an API root view.
+                               This may be useful for projects that do not explicitly know where the
+                               router is mounted; those projects can then use `reverse('api:root')`,
+                               for instance, if they need to construct URLs based on the API's root URL.
+        :type root_view_name: str|None
+
+        :param optional_trailing_slash: Whether to fix up the regexen for the router to make any trailing
+                                        slashes optional.
+        :type optional_trailing_slash: bool
+
+        :param decorate: A function to decorate view functions with, or an iterable of such decorators.
+                         Use `(lepo.decorators.csrf_exempt,)` to mark all API views as CSRF exempt.
+        :type decorate: function|Iterable[function]
+
+        :param name_template: A `.format()` template for view naming.
+        :type name_template: str
+
+        :return: List of URL tuples.
+        :rtype: list[tuple]
+        """
+        if isinstance(decorate, Iterable):
+            decorators = decorate
+
+            def decorate(view):
+                return reduce(lambda view, decorator: decorator(view), decorators, view)
+
         urls = []
         for path in self.get_paths():
-            urls.append(url(path.regex, path.view_class.as_view(), name=path.name))
+            regex = path.regex
+            if optional_trailing_slash:
+                regex = regex.rstrip('$')
+                if not regex.endswith('/'):
+                    regex += '/'
+                regex += '?$'
+            view = decorate(path.view_class.as_view())
+            urls.append(url(regex, view, name=name_template.format(name=path.name)))
+
+        if root_view_name:
+            urls.append(url(r'^$', root_view, name=name_template.format(name=root_view_name)))
         return urls
 
     def get_handler(self, operation_id):
