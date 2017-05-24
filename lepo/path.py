@@ -30,7 +30,7 @@ class Path:
     def _build_regex(self):
         return re.sub(
             PATH_PLACEHOLDER_REGEX,
-            lambda m: '(?P<%s>.+?)' % m.group(1),
+            lambda m: '(?P<%s>[^/]+?)' % m.group(1),
             self.path,
         ).lstrip('/') + '$'
 
