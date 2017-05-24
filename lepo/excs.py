@@ -29,3 +29,13 @@ class RouterValidationError(Exception):
         self.errors = error_map
         self.description = '\n'.join('%s: %s' % (key, value) for (key, value) in sorted(self.errors.items()))
         super(RouterValidationError, self).__init__('Router validation failed:\n%s' % self.description)
+
+
+class ExceptionalResponse(Exception):
+    """
+    Wraps a Response in an exception.
+
+    These exceptions are caught in PathView.
+    """
+    def __init__(self, response):
+        self.response = response
