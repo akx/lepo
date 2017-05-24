@@ -4,6 +4,7 @@ from django.views import View
 from lepo.api_info import APIInfo
 from lepo.excs import InvalidOperation, ExceptionalResponse
 from lepo.parameters import read_parameters
+from lepo.utils import snake_case
 
 
 class PathView(View):
@@ -16,7 +17,11 @@ class PathView(View):
         except InvalidOperation:
             return self.http_method_not_allowed(request, **kwargs)
         request.api_info = APIInfo(operation=operation)
-        params = read_parameters(request, kwargs)
+        params = dict(
+            (snake_case(name), value)
+            for (name, value)
+            in read_parameters(request, kwargs).items()
+        )
         handler = request.api_info.api.get_handler(operation.id)
         try:
             response = handler(request, **params)

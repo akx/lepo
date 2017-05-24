@@ -5,12 +5,11 @@ from importlib import import_module
 
 from django.conf.urls import url
 from django.http import HttpResponse
-from django.utils.text import camel_case_to_spaces
 from jsonschema import RefResolver
 
 from lepo.excs import MissingHandler
 from lepo.path import Path
-from lepo.utils import maybe_resolve
+from lepo.utils import maybe_resolve, snake_case
 
 
 def root_view(request):
@@ -105,13 +104,14 @@ class Router:
         return urls
 
     def get_handler(self, operation_id):
-        if operation_id in self.handlers:
-            return self.handlers[operation_id]
-        snake_operation_id = camel_case_to_spaces(operation_id).replace(' ', '_')
-        if snake_operation_id in self.handlers:
-            return self.handlers[snake_operation_id]
+        handler = (
+            self.handlers.get(operation_id)
+            or self.handlers.get(snake_case(operation_id))
+        )
+        if handler:
+            return handler
         raise MissingHandler(
-            'Missing handler for operation %s (tried %s too)' % (operation_id, snake_operation_id)
+            'Missing handler for operation %s (tried %s too)' % (operation_id, snake_case(operation_id))
         )
 
     def add_handlers(self, namespace):
