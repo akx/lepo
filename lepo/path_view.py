@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from lepo.api_info import APIInfo
-from lepo.excs import InvalidOperation
+from lepo.excs import InvalidOperation, ExceptionalResponse
 from lepo.parameters import read_parameters
 
 
@@ -18,7 +18,14 @@ class PathView(View):
         request.api_info = APIInfo(operation=operation)
         params = read_parameters(request, kwargs)
         handler = request.api_info.api.get_handler(operation.id)
-        response = handler(request, **params)
+        try:
+            response = handler(request, **params)
+        except ExceptionalResponse as er:
+            response = er.response
+
+        return self.transform_response(response)
+
+    def transform_response(self, response):
         if isinstance(response, HttpResponse):
             # TODO: validate against responses
             return response

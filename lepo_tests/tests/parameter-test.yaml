@@ -8,6 +8,7 @@ paths:
         in: formData
   /greet:
     get:
+      operationId: greet
       parameters:
       - name: greeting
         type: string
