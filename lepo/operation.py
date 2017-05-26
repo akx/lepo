@@ -6,14 +6,14 @@ from lepo.utils import maybe_resolve
 
 
 class Operation:
-    def __init__(self, api, path, method, data):
+    def __init__(self, router, path, method, data):
         """
-        :type api: lepo.router.Router
+        :type router: lepo.router.Router
         :type path: lepo.path.Path
         :type method: str
         :type data: dict
         """
-        self.api = api
+        self.router = router
         self.path = path
         self.method = method
         self.data = data
@@ -43,9 +43,9 @@ class Operation:
             self.path.mapping.get('parameters', ()),
             self.data.get('parameters', {}),
         ):
-            source = maybe_resolve(source, self.api.resolve_reference)
+            source = maybe_resolve(source, self.router.resolve_reference)
             for parameter in source:
-                parameter = maybe_resolve(parameter, self.api.resolve_reference)
+                parameter = maybe_resolve(parameter, self.router.resolve_reference)
                 parameters[parameter['name']] = parameter
 
         return list(parameters.values())
@@ -55,7 +55,7 @@ class Operation:
         for obj in (
             self.data,
             self.path.mapping,
-            self.api.api,
+            self.router.api,
         ):
             if key in obj:
                 return obj[key]

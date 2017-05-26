@@ -8,7 +8,7 @@ from lepo.utils import snake_case
 
 
 class PathView(View):
-    api = None  # Filled in by subclasses
+    router = None  # Filled in by subclasses
     path = None  # Filled in by subclasses
 
     def dispatch(self, request, **kwargs):
@@ -22,7 +22,7 @@ class PathView(View):
             for (name, value)
             in read_parameters(request, kwargs).items()
         )
-        handler = request.api_info.api.get_handler(operation.id)
+        handler = request.api_info.router.get_handler(operation.id)
         try:
             response = handler(request, **params)
         except ExceptionalResponse as er:
