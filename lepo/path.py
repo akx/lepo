@@ -11,15 +11,15 @@ METHODS = {'get', 'put', 'post', 'delete', 'options', 'head', 'patch'}
 
 
 class Path:
-    def __init__(self, api, path, mapping):
-        self.api = api
+    def __init__(self, router, path, mapping):
+        self.router = router
         self.path = path
         self.mapping = mapping
         self.regex = self._build_regex()
         self.name = self._build_view_name()
         self.view_class = type('%sView' % self.name.title(), (PathView,), {
             'path': self,
-            'api': self.api,
+            'router': self.router,
         })
 
     def _build_view_name(self):
@@ -38,7 +38,7 @@ class Path:
         operation_data = self.mapping.get(method.lower())
         if not operation_data:
             raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
-        return Operation(api=self.api, path=self, data=operation_data, method=method)
+        return Operation(router=self.router, path=self, data=operation_data, method=method)
 
     def get_operations(self):
         for method in METHODS:

@@ -3,6 +3,6 @@ class APIInfo:
         """
         :type operation: lepo.operation.Operation
         """
-        self.api = operation.api
+        self.router = operation.router
         self.path = operation.path
         self.operation = operation

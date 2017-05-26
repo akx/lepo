@@ -46,7 +46,7 @@ class Router:
         :rtype: lepo.path.Path
         """
         mapping = maybe_resolve(self.api['paths'][path], self.resolve_reference)
-        return self.path_class(api=self, path=path, mapping=mapping)
+        return self.path_class(router=self, path=path, mapping=mapping)
 
     def get_paths(self):
         for path in self.api['paths']:

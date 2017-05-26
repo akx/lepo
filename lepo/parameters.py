@@ -36,13 +36,13 @@ def cast_parameter_value(api_info, parameter, value):
         items = parameter['items']
         value = [cast_parameter_value(api_info, items, item) for item in value]
     if 'schema' in parameter:
-        schema = maybe_resolve(parameter['schema'], api_info.api.resolve_reference)
-        jsonschema.validate(value, schema, resolver=api_info.api.resolver)
+        schema = maybe_resolve(parameter['schema'], api_info.router.resolve_reference)
+        jsonschema.validate(value, schema, resolver=api_info.router.resolver)
         if 'discriminator' in schema:  # Swagger Polymorphism support
             type = value[schema['discriminator']]
             actual_type = '#/definitions/%s' % type
-            schema = api_info.api.resolve_reference(actual_type)
-            jsonschema.validate(value, schema, resolver=api_info.api.resolver)
+            schema = api_info.router.resolve_reference(actual_type)
+            jsonschema.validate(value, schema, resolver=api_info.router.resolver)
         return value
     value = cast_primitive_value(parameter, value)
     jsonschema_validation_object = {
