@@ -2,6 +2,7 @@ from collections import Iterable
 from copy import deepcopy
 from functools import reduce
 from importlib import import_module
+from inspect import isfunction, ismethod
 
 from django.conf.urls import url
 from django.http import HttpResponse
@@ -115,16 +116,30 @@ class Router:
         )
 
     def add_handlers(self, namespace):
+        """
+        Add handler functions from the given `namespace`, for instance a module.
+
+        The namespace may be a string, in which case it is expected to be a name of a module.
+        It may also be a dictionary mapping names to functions.
+
+        Only non-underscore-prefixed functions and methods are imported.
+
+        :param namespace: Namespace object.
+        :type namespace: str|module|dict[str, function]
+        """
         if isinstance(namespace, str):
             namespace = import_module(namespace)
-        for name, value in vars(namespace).items():
+
+        if isinstance(namespace, dict):
+            namespace = namespace.items()
+        else:
+            namespace = vars(namespace).items()
+
+        for name, value in namespace:
             if name.startswith('_'):
                 continue
-            try:
-                if callable(value):
-                    self.handlers[name] = value
-            except:
-                pass
+            if isfunction(value) or ismethod(value):
+                self.handlers[name] = value
 
     def resolve_reference(self, ref):
         url, resolved = self.resolver.resolve(ref)
