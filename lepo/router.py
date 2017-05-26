@@ -21,6 +21,12 @@ class Router:
     path_class = Path
 
     def __init__(self, api):
+        """
+        Instantiate a new Lepo router.
+
+        :param api: The OpenAPI definition object.
+        :type api: dict
+        """
         self.api = deepcopy(api)
         self.api.pop('host', None)
         self.handlers = {}
@@ -28,6 +34,15 @@ class Router:
 
     @classmethod
     def from_file(cls, filename):
+        """
+        Construct a Router by parsing the given `filename`.
+
+        If PyYAML is installed, YAML files are supported.
+        JSON files are always supported.
+
+        :param filename: The filename to read.
+        :rtype: Router
+        """
         with open(filename) as infp:
             if filename.endswith('.yaml') or filename.endswith('.yml'):
                 import yaml
@@ -50,6 +65,11 @@ class Router:
         return self.path_class(router=self, path=path, mapping=mapping)
 
     def get_paths(self):
+        """
+        Iterate over all Path objects declared by the API.
+
+        :rtype: Iterable[lepo.path.Path]
+        """
         for path in self.api['paths']:
             yield self.get_path(path)
 
@@ -105,6 +125,18 @@ class Router:
         return urls
 
     def get_handler(self, operation_id):
+        """
+        Get the handler function for a given operation.
+
+        To remain Pythonic, both the original and the snake_cased version of the operation ID are
+        supported.
+
+        This could be overridden in a subclass.
+
+        :param operation_id: Operation ID.
+        :return: Handler function
+        :rtype: function
+        """
         handler = (
             self.handlers.get(operation_id)
             or self.handlers.get(snake_case(operation_id))
@@ -142,5 +174,12 @@ class Router:
                 self.handlers[name] = value
 
     def resolve_reference(self, ref):
+        """
+        Resolve a JSON Pointer object reference to the object itself.
+
+        :param ref: Reference string (`#/foo/bar`, for instance)
+        :return: The object, if found
+        :raises jsonschema.exceptions.RefResolutionError: if there is trouble resolving the reference
+        """
         url, resolved = self.resolver.resolve(ref)
         return resolved
