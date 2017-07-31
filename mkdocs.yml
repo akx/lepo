@@ -4,6 +4,7 @@ pages:
 - features.md
 - getting-started.md
 - class-based-handlers.md
+- concepts.md
 theme: material
 markdown_extensions:
 - admonition
