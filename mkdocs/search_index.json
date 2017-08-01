@@ -79,6 +79,46 @@
             "location": "/class-based-handlers/#class-based-handlers",
             "text": "Lepo provides a base class for class based views that validate their input and output against the schema.\nMore documentation on this is TBD.",
             "title": "Class based handlers"
+        },
+        {
+            "location": "/concepts/",
+            "text": "Concepts\n\n\nRouter\n\n\nThe \nlepo.router.Router\n class is the root class of the API.\n\n\nIt encapsulates the OpenAPI definition document and generates\nthe URL patterns that are to be mounted in a Django URLconf.\n\n\nHandler\n\n\nHandlers are the functions that do the actual API work.\n\n\nThey are mapped to the OpenAPI definition by way of the \noperationId\n\nfield available in Operation objects.\n\n\nHandler functions are superficially similar to plain Django view functions\naside from a few significant differences:\n\n\n\n\nrequest\n is the \nonly\n positional argument passed to a handler;\n  the other arguments are mapped from the OpenAPI operation's parameters\n  and passed in as keyword arguments (converted to \nsnake_case\n).\n\n\n\n\nException Handling\n\n\nYou can raise a \nlepo.excs.ExceptionalResponse\n (which wraps a Django \nresponse\n)\nanywhere within a handler invocation. These exceptions will be caught by the internal\n\nPathView\n class and the wrapped response used as the handler's response.\n\n\nThis is a pragmatic way to refactor behavior common to multiple handlers, e.g.\n\n\ndef\n \n_get_some_object\n(\nrequest\n,\n \nid\n):\n\n    \nif\n \nnot\n \nrequest\n.\nuser\n.\nis_authenticated\n():\n\n        \nraise\n \nExceptionalResponse\n(\nJsonResponse\n({\n'error'\n:\n \n'not authenticated'\n},\n \nstatus\n=\n401\n))\n\n    \ntry\n:\n\n        \nreturn\n \nObject\n.\nobjects\n.\nget\n(\npk\n=\nid\n)\n\n    \nexcept\n \nObjectDoesNotExist\n:\n\n        \nraise\n \nExceptionalResponse\n(\nJsonResponse\n({\n'error'\n:\n \n'no such object'\n},\n \nstatus\n=\n404\n))\n\n\n\n\ndef\n \nget_object_detail\n(\nrequest\n,\n \nid\n):\n\n    \nobject\n \n=\n \n_get_some_object\n(\nrequest\n,\n \nid\n)\n\n    \nreturn\n \n{\n'id'\n:\n \nobject\n.\nid\n}\n\n\n\n\ndef\n \ndelete_object\n(\nrequest\n,\n \nid\n):\n\n    \nobject\n \n=\n \n_get_some_object\n(\nrequest\n,\n \nid\n)\n\n    \nobject\n.\ndelete\n()\n\n    \nreturn\n \n{\n'id'\n:\n \nobject\n.\nid\n,\n \n'deleted'\n:\n \nTrue\n}",
+            "title": "Concepts"
+        },
+        {
+            "location": "/concepts/#concepts",
+            "text": "",
+            "title": "Concepts"
+        },
+        {
+            "location": "/concepts/#router",
+            "text": "The  lepo.router.Router  class is the root class of the API.  It encapsulates the OpenAPI definition document and generates\nthe URL patterns that are to be mounted in a Django URLconf.",
+            "title": "Router"
+        },
+        {
+            "location": "/concepts/#handler",
+            "text": "Handlers are the functions that do the actual API work.  They are mapped to the OpenAPI definition by way of the  operationId \nfield available in Operation objects.  Handler functions are superficially similar to plain Django view functions\naside from a few significant differences:   request  is the  only  positional argument passed to a handler;\n  the other arguments are mapped from the OpenAPI operation's parameters\n  and passed in as keyword arguments (converted to  snake_case ).",
+            "title": "Handler"
+        },
+        {
+            "location": "/concepts/#exception-handling",
+            "text": "You can raise a  lepo.excs.ExceptionalResponse  (which wraps a Django  response )\nanywhere within a handler invocation. These exceptions will be caught by the internal PathView  class and the wrapped response used as the handler's response.  This is a pragmatic way to refactor behavior common to multiple handlers, e.g.  def   _get_some_object ( request ,   id ): \n     if   not   request . user . is_authenticated (): \n         raise   ExceptionalResponse ( JsonResponse ({ 'error' :   'not authenticated' },   status = 401 )) \n     try : \n         return   Object . objects . get ( pk = id ) \n     except   ObjectDoesNotExist : \n         raise   ExceptionalResponse ( JsonResponse ({ 'error' :   'no such object' },   status = 404 ))  def   get_object_detail ( request ,   id ): \n     object   =   _get_some_object ( request ,   id ) \n     return   { 'id' :   object . id }  def   delete_object ( request ,   id ): \n     object   =   _get_some_object ( request ,   id ) \n     object . delete () \n     return   { 'id' :   object . id ,   'deleted' :   True }",
+            "title": "Exception Handling"
+        },
+        {
+            "location": "/codegen/",
+            "text": "Code Generation\n\n\nYou can use the \nlepo.codegen\n module to generate a handler stub file\nfrom an OpenAPI YAML/JSON file.\n\n\nCommand line usage\n\n\npython -m lepo.codegen swagger.yaml > handlers.py",
+            "title": "Codegen"
+        },
+        {
+            "location": "/codegen/#code-generation",
+            "text": "You can use the  lepo.codegen  module to generate a handler stub file\nfrom an OpenAPI YAML/JSON file.",
+            "title": "Code Generation"
+        },
+        {
+            "location": "/codegen/#command-line-usage",
+            "text": "python -m lepo.codegen swagger.yaml > handlers.py",
+            "title": "Command line usage"
         }
     ]
 }

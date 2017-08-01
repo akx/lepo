@@ -15,7 +15,7 @@
     
     
       
-        <title>Getting started - Lepo</title>
+        <title>Codegen - Lepo</title>
       
     
     
@@ -76,7 +76,7 @@
             
               
             
-            Getting started
+            Codegen
           
         </span>
       </div>
@@ -205,20 +205,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
-    
-      
-    
-    
-    <a href="./" title="Getting started" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../getting-started/" title="Getting started" class="md-nav__link">
       Getting started
     </a>
-    
   </li>
 
     
@@ -250,11 +241,47 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../codegen/" title="Codegen" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Codegen
+      </label>
+    
+    <a href="./" title="Codegen" class="md-nav__link md-nav__link--active">
       Codegen
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-usage" title="Command line usage" class="md-nav__link">
+    Command line usage
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -275,6 +302,20 @@
     
   
   
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-usage" title="Command line usage" class="md-nav__link">
+    Command line usage
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -286,74 +327,11 @@
               
                 
                 
-                <h1 id="getting-started">Getting started</h1>
-<p>Write the contract of the first version of your API in the <a href="https://github.com/OAI/OpenAPI-Specification">OpenAPI format</a>. You'll end up with a YAML file popularly called <code class="codehilite">swagger.yml</code>.</p>
-<div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">swagger</span><span class="p p-Indicator">:</span> <span class="s">&quot;2.0&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">info</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">version</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.1</span>
-  <span class="l l-Scalar l-Scalar-Plain">title</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Lepo Petstore</span>
-  <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">A sample API that uses a petstore as an example to …</span>
-<span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost:8000</span>
-<span class="l l-Scalar l-Scalar-Plain">basePath</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/api</span>
-<span class="l l-Scalar l-Scalar-Plain">schemes</span><span class="p p-Indicator">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http</span>
-<span class="l l-Scalar l-Scalar-Plain">consumes</span><span class="p p-Indicator">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">application/json</span>
-<span class="l l-Scalar l-Scalar-Plain">produces</span><span class="p p-Indicator">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">application/json</span>
-<span class="l l-Scalar l-Scalar-Plain">paths</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">/pets</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">get</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
-        <span class="no">Returns all pets from the system that the user has access to</span>
-      <span class="l l-Scalar l-Scalar-Plain">operationId</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">findPets</span>
-      <span class="l l-Scalar l-Scalar-Plain">responses</span><span class="p p-Indicator">:</span>
-        <span class="l l-Scalar l-Scalar-Plain">200</span><span class="p p-Indicator">:</span>
-          <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Great success.</span>
-</pre></div>
-
-
-<p>Note the <code class="codehilite">operationId</code> field. It's converted from camel case to snake case (<code class="codehilite">findPets</code> becomes <code class="codehilite">find_pets</code>) and used to route an API call to the correct handler (or <em>view</em> in Django lingo).</p>
-<p>Add <code class="codehilite">lepo</code> to your <code class="codehilite">INSTALLED_APPS</code>. If you want to use the Swagger UI, also add <code class="codehilite">lepo_docs</code>.</p>
-<div class="codehilite"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="c1"># …</span>
-    <span class="s1">&#39;lepo&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;lepo_doc&#39;</span><span class="p">,</span>
-<span class="p">]</span>
-</pre></div>
-
-
-<p>Make a Django app, say <code class="codehilite">petstore</code>, add it to <code class="codehilite">INSTALLED_APPS</code>, and hook the <code class="codehilite">swagger.yml</code> up to your application in <code class="codehilite">urls.py</code>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
-
-<span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
-<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
-
-<span class="kn">from</span> <span class="nn">lepo.router</span> <span class="kn">import</span> <span class="n">Router</span>
-<span class="kn">from</span> <span class="nn">lepo.validate</span> <span class="kn">import</span> <span class="n">validate_router</span>
-<span class="kn">from</span> <span class="nn">lepo_doc.urls</span> <span class="kn">import</span> <span class="n">get_docs_urls</span>
-
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
-
-
-<span class="n">router</span> <span class="o">=</span> <span class="n">Router</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;swagger.yml&#39;</span><span class="p">))</span>
-<span class="n">router</span><span class="o">.</span><span class="n">add_handlers</span><span class="p">(</span><span class="n">views</span><span class="p">)</span>
-<span class="n">validate_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
-
-<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
-    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">get_urls</span><span class="p">(),</span> <span class="s1">&#39;api&#39;</span><span class="p">)),</span>
-    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">get_docs_urls</span><span class="p">(</span><span class="n">router</span><span class="p">,</span> <span class="s1">&#39;api-docs&#39;</span><span class="p">),</span> <span class="s1">&#39;api-docs&#39;</span><span class="p">)),</span>
-<span class="p">]</span>
-</pre></div>
-
-
-<p>Observe it is your responsibility to mount the API at the correct base path. Lepo does not read <code class="codehilite">basePath</code> from your <code class="codehilite">swagger.yml</code>.</p>
-<p>Finally, implement the operations in <code class="codehilite">petstore/views.py</code>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JSONResponse</span>
-
-<span class="k">def</span> <span class="nf">find_pets</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">({</span><span class="s1">&#39;pets&#39;</span><span class="p">:</span> <span class="p">[]})</span>
+                <h1 id="code-generation">Code Generation</h1>
+<p>You can use the <code class="codehilite">lepo.codegen</code> module to generate a handler stub file
+from an OpenAPI YAML/JSON file.</p>
+<h2 id="command-line-usage">Command line usage</h2>
+<div class="codehilite"><pre><span></span>python -m lepo.codegen swagger.yaml &gt; handlers.py
 </pre></div>
                 
                   
@@ -373,7 +351,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../features/" title="Features" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../concepts/" title="Concepts" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -382,25 +360,11 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Features
+                Concepts
               </span>
             </div>
           </a>
         
-        
-          <a href="../class-based-handlers/" title="Class based handlers" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                Class based handlers
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
         
       </nav>
     </div>
