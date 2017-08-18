@@ -262,6 +262,19 @@
     Router
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#view-decoration" title="View Decoration" class="md-nav__link">
+    View Decoration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -330,6 +343,19 @@
     Router
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#view-decoration" title="View Decoration" class="md-nav__link">
+    View Decoration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -372,6 +398,24 @@
 <p>The <code class="codehilite">lepo.router.Router</code> class is the root class of the API.</p>
 <p>It encapsulates the OpenAPI definition document and generates
 the URL patterns that are to be mounted in a Django URLconf.</p>
+<h3 id="view-decoration">View Decoration</h3>
+<p>You can decorate the views that end up calling handlers when you instantiate the router.</p>
+<p>For instance, you will need to decorate the views to be CSRF exempt
+if you're using Django's default <a href="https://docs.djangoproject.com/en/1.11/ref/csrf/">CSRF middleware</a>
+and need to send POST (or PATCH, etc.) requests to your API.</p>
+<p>To do this, turn your</p>
+<div class="codehilite"><pre><span></span><span class="n">router</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()</span>
+</pre></div>
+
+
+<p>into</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">lepo.decorators</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+
+<span class="n">router</span><span class="o">.</span><span class="n">get_urls</span><span class="p">(</span><span class="n">decorate</span><span class="o">=</span><span class="p">(</span><span class="n">csrf_exempt</span><span class="p">,))</span>
+</pre></div>
+
+
+<p>(Do note that this <em>does</em> indeed remove Django's CSRF protection from the API views.)</p>
 <h2 id="handler">Handler</h2>
 <p>Handlers are the functions that do the actual API work.</p>
 <p>They are mapped to the OpenAPI definition by way of the <code class="codehilite">operationId</code>

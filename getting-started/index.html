@@ -215,9 +215,50 @@
       
     
     
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Getting started
+      </label>
+    
     <a href="./" title="Getting started" class="md-nav__link md-nav__link--active">
       Getting started
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-your-api-contract" title="Writing your API contract" class="md-nav__link">
+    Writing your API contract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-lepo" title="Installing Lepo" class="md-nav__link">
+    Installing Lepo
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wiring-up-lepo" title="Wiring up Lepo" class="md-nav__link">
+    Wiring up Lepo
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -275,6 +316,34 @@
     
   
   
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-your-api-contract" title="Writing your API contract" class="md-nav__link">
+    Writing your API contract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-lepo" title="Installing Lepo" class="md-nav__link">
+    Installing Lepo
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wiring-up-lepo" title="Wiring up Lepo" class="md-nav__link">
+    Wiring up Lepo
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -287,6 +356,7 @@
                 
                 
                 <h1 id="getting-started">Getting started</h1>
+<h2 id="writing-your-api-contract">Writing your API contract</h2>
 <p>Write the contract of the first version of your API in the <a href="https://github.com/OAI/OpenAPI-Specification">OpenAPI format</a>. You'll end up with a YAML file popularly called <code class="codehilite">swagger.yml</code>.</p>
 <div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">swagger</span><span class="p p-Indicator">:</span> <span class="s">&quot;2.0&quot;</span>
 <span class="l l-Scalar l-Scalar-Plain">info</span><span class="p p-Indicator">:</span>
@@ -314,7 +384,20 @@
 
 
 <p>Note the <code class="codehilite">operationId</code> field. It's converted from camel case to snake case (<code class="codehilite">findPets</code> becomes <code class="codehilite">find_pets</code>) and used to route an API call to the correct handler (or <em>view</em> in Django lingo).</p>
-<p>Add <code class="codehilite">lepo</code> to your <code class="codehilite">INSTALLED_APPS</code>. If you want to use the Swagger UI, also add <code class="codehilite">lepo_docs</code>.</p>
+<h2 id="installing-lepo">Installing Lepo</h2>
+<p>Install Lepo into your environment (likely a <a href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">virtualenv</a>) using <code class="codehilite">pip</code>
+(or if you manage requirements using a requirements.txt file or similar, add it there).</p>
+<div class="codehilite"><pre><span></span>$ pip install lepo
+</pre></div>
+
+
+<p>Since we're using a YAML-formatted API declaration, we'll also need the [PyYAML] library.
+If you happen to be using JSON-formatted OpenAPI documents, you don't need this.</p>
+<div class="codehilite"><pre><span></span>$ pip install PyYAML
+</pre></div>
+
+
+<p>Add <code class="codehilite">lepo</code> to your <code class="codehilite">INSTALLED_APPS</code>. If you want to use the Swagger UI, also add <code class="codehilite">lepo_doc</code>.</p>
 <div class="codehilite"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="c1"># …</span>
     <span class="s1">&#39;lepo&#39;</span><span class="p">,</span>
@@ -323,6 +406,7 @@
 </pre></div>
 
 
+<h2 id="wiring-up-lepo">Wiring up Lepo</h2>
 <p>Make a Django app, say <code class="codehilite">petstore</code>, add it to <code class="codehilite">INSTALLED_APPS</code>, and hook the <code class="codehilite">swagger.yml</code> up to your application in <code class="codehilite">urls.py</code>:</p>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 
