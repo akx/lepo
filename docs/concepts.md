@@ -7,6 +7,30 @@ The `lepo.router.Router` class is the root class of the API.
 It encapsulates the OpenAPI definition document and generates
 the URL patterns that are to be mounted in a Django URLconf.
 
+### View Decoration
+
+You can decorate the views that end up calling handlers when you instantiate the router.
+
+For instance, you will need to decorate the views to be CSRF exempt
+if you're using Django's default [CSRF middleware][csrf-middleware]
+and need to send POST (or PATCH, etc.) requests to your API.
+
+To do this, turn your
+
+```python
+router.get_urls()
+```
+
+into
+
+```python
+from lepo.decorators import csrf_exempt
+
+router.get_urls(decorate=(csrf_exempt,))
+```
+
+(Do note that this _does_ indeed remove Django's CSRF protection from the API views.)
+
 ## Handler
 
 Handlers are the functions that do the actual API work.
@@ -49,3 +73,5 @@ def delete_object(request, id):
     object.delete()
     return {'id': object.id, 'deleted': True}
 ```
+
+[csrf-middleware]: https://docs.djangoproject.com/en/1.11/ref/csrf/
