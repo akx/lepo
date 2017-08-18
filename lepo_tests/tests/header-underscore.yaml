@@ -1,0 +1,10 @@
+swagger: "2.0"
+consumes:
+- application/json
+paths:
+  /cat:
+    post:
+      operationId: hello
+      parameters:
+        - name: greeting_text
+          in: header

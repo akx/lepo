@@ -1,3 +1,6 @@
+from django.core.exceptions import ImproperlyConfigured
+
+
 class MissingParameter(ValueError):
     pass
 
@@ -24,11 +27,21 @@ class InvalidBodyContent(ValueError):
     pass
 
 
+class InvalidParameterDefinition(ImproperlyConfigured):
+    pass
+
+
 class RouterValidationError(Exception):
     def __init__(self, error_map):
         self.errors = error_map
-        self.description = '\n'.join('%s: %s' % (key, value) for (key, value) in sorted(self.errors.items()))
+        self.description = '\n'.join('%s: %s' % (operation.id, error) for (operation, error) in self.flat_errors)
         super(RouterValidationError, self).__init__('Router validation failed:\n%s' % self.description)
+
+    @property
+    def flat_errors(self):
+        for operation, errors in sorted(self.errors.items(), key=str):
+            for error in errors:
+                yield (operation, error)
 
 
 class ExceptionalResponse(Exception):
