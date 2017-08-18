@@ -1,5 +1,7 @@
 # Getting started
 
+## Writing your API contract
+
 Write the contract of the first version of your API in the [OpenAPI format](https://github.com/OAI/OpenAPI-Specification). You'll end up with a YAML file popularly called `swagger.yml`.
 
 ```yaml
@@ -29,7 +31,16 @@ paths:
 
 Note the `operationId` field. It's converted from camel case to snake case (`findPets` becomes `find_pets`) and used to route an API call to the correct handler (or *view* in Django lingo).
 
-Add `lepo` to your `INSTALLED_APPS`. If you want to use the Swagger UI, also add `lepo_docs`.
+## Installing Lepo
+
+Install Lepo into your environment (likely a [virtualenv]) using `pip`
+(or if you manage requirements using a requirements.txt file or similar, add it there).
+
+```shell
+$ pip install lepo
+```
+
+Add `lepo` to your `INSTALLED_APPS`. If you want to use the Swagger UI, also add `lepo_doc`.
 
 ```python
 INSTALLED_APPS = [
@@ -38,6 +49,8 @@ INSTALLED_APPS = [
     'lepo_doc',
 ]
 ```
+
+## Wiring up Lepo
 
 Make a Django app, say `petstore`, add it to `INSTALLED_APPS`, and hook the `swagger.yml` up to your application in `urls.py`:
 
@@ -75,3 +88,5 @@ from django.http import JSONResponse
 def find_pets(request):
     return JSONResponse({'pets': []})
 ```
+
+[virtualenv]: http://docs.python-guide.org/en/latest/dev/virtualenvs/
