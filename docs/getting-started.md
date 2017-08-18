@@ -40,6 +40,13 @@ Install Lepo into your environment (likely a [virtualenv]) using `pip`
 $ pip install lepo
 ```
 
+Since we're using a YAML-formatted API declaration, we'll also need the [PyYAML] library.
+If you happen to be using JSON-formatted OpenAPI documents, you don't need this.
+
+```shell
+$ pip install PyYAML
+```
+
 Add `lepo` to your `INSTALLED_APPS`. If you want to use the Swagger UI, also add `lepo_doc`.
 
 ```python
