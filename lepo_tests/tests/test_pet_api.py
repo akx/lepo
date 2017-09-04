@@ -2,29 +2,56 @@ import json
 
 import pytest
 from django.utils.crypto import get_random_string
+import django.conf
+from django.core.urlresolvers import clear_url_caches, set_urlconf
 
-from lepo.excs import InvalidBodyFormat, InvalidBodyContent
+from lepo.excs import InvalidBodyContent, InvalidBodyFormat
 from lepo_tests.models import Pet
+from lepo_tests.tests.utils import get_data_from_response
+
+# -- Start of some minor Pytest magic to parametrize the entirety
+#    of this module to run on multiple urlconfs.
+
+API_URLS = [
+    'lepo_tests.urls_bare',
+    'lepo_tests.urls_cb',
+]
 
 
-def get_data_from_response(response, status=200):
-    if status and response.status_code != status:
-        raise ValueError('failed status check (%s != expected %s)' % (response.status_code, status))
-    return json.loads(response.content.decode('utf-8'))
+def pytest_generate_tests(metafunc):
+    if 'api_urls' in metafunc.fixturenames:
+        metafunc.parametrize('api_urls', API_URLS, indirect=True)
+
+
+@pytest.fixture
+def api_urls(request):
+    urls = request.param
+    original_urlconf = django.conf.settings.ROOT_URLCONF
+    django.conf.settings.ROOT_URLCONF = urls
+    clear_url_caches()
+    set_urlconf(None)
+
+    def restore():
+        django.conf.settings.ROOT_URLCONF = original_urlconf
+        clear_url_caches()
+        set_urlconf(None)
+
+    request.addfinalizer(restore)
 
 
 @pytest.mark.django_db
-def test_get_empty_list(client):
+def test_get_empty_list(client, api_urls):
     assert get_data_from_response(client.get('/api/pets')) == []
 
 
 @pytest.mark.django_db
-def test_optional_trailing_slash(client):
+def test_optional_trailing_slash(client, api_urls):
     assert get_data_from_response(client.get('/api/pets/')) == []
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize('with_tag', (False, True))
-def test_post_pet(client, with_tag):
+def test_post_pet(client, api_urls, with_tag):
     payload = {
         'name': get_random_string(),
     }
@@ -49,7 +76,7 @@ def test_post_pet(client, with_tag):
 
 
 @pytest.mark.django_db
-def test_search_by_tag(client):
+def test_search_by_tag(client, api_urls):
     pet1 = Pet.objects.create(name='smolboye', tag='pupper')
     pet2 = Pet.objects.create(name='longboye', tag='doggo')
     assert len(get_data_from_response(client.get('/api/pets'))) == 2
@@ -60,7 +87,7 @@ def test_search_by_tag(client):
 
 
 @pytest.mark.django_db
-def test_delete_pet(client):
+def test_delete_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     pet2 = Pet.objects.create(name='worl')
     assert len(get_data_from_response(client.get('/api/pets'))) == 2
@@ -69,7 +96,7 @@ def test_delete_pet(client):
 
 
 @pytest.mark.django_db
-def test_update_pet(client):
+def test_update_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     payload = {'name': 'worl', 'tag': 'bunner'}
     resp = client.patch(
@@ -85,12 +112,12 @@ def test_update_pet(client):
 
 
 @pytest.mark.django_db
-def test_invalid_operation(client):
+def test_invalid_operation(client, api_urls):
     assert client.patch('/api/pets').status_code == 405
 
 
 @pytest.mark.django_db
-def test_invalid_body_format(client):
+def test_invalid_body_format(client, api_urls):
     with pytest.raises(InvalidBodyFormat):
         client.post(
             '/api/pets',
@@ -100,7 +127,7 @@ def test_invalid_body_format(client):
 
 
 @pytest.mark.django_db
-def test_invalid_body_content(client):
+def test_invalid_body_content(client, api_urls):
     with pytest.raises(InvalidBodyContent):
         client.post(
             '/api/pets',

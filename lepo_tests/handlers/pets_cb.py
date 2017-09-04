@@ -1,16 +1,14 @@
+"""
+Class-based implementation of the pet resource.
+"""
+
 from functools import reduce
 
 from django.db.models import Q
-from marshmallow import fields, Schema
 
 from lepo.handlers import CRUDModelHandler
 from lepo_tests.models import Pet
-
-
-class PetSchema(Schema):
-    id = fields.Integer(required=False)
-    name = fields.Str(required=True)
-    tag = fields.Str(required=False)
+from lepo_tests.schemata import PetSchema
 
 
 class PetHandler(CRUDModelHandler):
@@ -41,32 +39,3 @@ add_pet = PetHandler.get_view('handle_create')
 find_pet_by_id = PetHandler.get_view('handle_retrieve')
 delete_pet = PetHandler.get_view('handle_delete')
 update_pet = PetHandler.get_view('handle_update')
-
-# Could instead do this:
-"""
-def find_pets(request, limit=None, tags=()):
-    pets = Pet.objects.all()[:limit]
-    if tags:
-        tags_q = reduce(
-            lambda q, term: q | Q(tag=term),
-            tags,
-            Q()
-        )
-        pets = pets.filter(tags_q)
-    return PetSchema().dump(pets, many=True).data
-
-
-def add_pet(request, pet):
-    pet_data = PetSchema().load(pet).data
-    pet = Pet(**pet_data)
-    pet.save()
-    return PetSchema().dump(pet).data
-
-
-def find_pet_by_id(request, id):
-    return PetSchema().dump(Pet.objects.get(id=id)).data
-
-
-def delete_pet(request, id):
-    Pet.objects.filter(id=id).delete()
-"""
