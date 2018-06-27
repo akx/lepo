@@ -9,11 +9,11 @@ from lepo.validate import validate_router
 from lepo_doc.urls import get_docs_urls
 
 
-def get_urlpatterns(handler_module):
+def get_urlpatterns(handler_module, definition_file='swagger2/petstore-expanded.yaml'):
     # NB: This could just as well be your `urls.py` – it's here to make testing various handler
     #     configurations easier.
 
-    router = Router.from_file(os.path.join(os.path.dirname(__file__), 'tests', 'petstore-expanded.yaml'))
+    router = Router.from_file(os.path.join(os.path.dirname(__file__), 'tests', definition_file))
     router.add_handlers(handler_module)
     validate_router(router)
     router_urls = router.get_urls(

@@ -25,7 +25,7 @@ def test_parameter_validation():
         )
 
 
-router = get_router('parameter-test.yaml')
+router = get_router('swagger2/parameter-test.yaml')
 
 
 def test_files(rf):

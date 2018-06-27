@@ -9,7 +9,7 @@ def greet(request, greeting, greetee):
 
 
 def test_exceptional_response(rf):
-    router = get_router('parameter-test.yaml')
+    router = get_router('swagger2/parameter-test.yaml')
     router.add_handlers({'greet': greet})
     path_view = router.get_path('/greet').view_class.as_view()
     response = path_view(rf.get('/', {'greeting': 'hello', 'greetee': 'world'}))
