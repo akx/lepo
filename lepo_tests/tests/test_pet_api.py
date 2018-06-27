@@ -3,7 +3,13 @@ import json
 import pytest
 from django.utils.crypto import get_random_string
 import django.conf
-from django.core.urlresolvers import clear_url_caches, set_urlconf
+
+try:
+    # Django 2
+    from django.urls import clear_url_caches, set_urlconf
+except:  # pragma: no cover
+    # Django 1.11
+    from django.core.urlresolvers import clear_url_caches, set_urlconf
 
 from lepo.excs import InvalidBodyContent, InvalidBodyFormat
 from lepo_tests.models import Pet

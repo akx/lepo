@@ -23,7 +23,7 @@ def get_urlpatterns(handler_module):
 
     urlpatterns = [
         url(r'^admin/', admin.site.urls),
-        url(r'^api/', include(router_urls, 'api')),
-        url(r'^api/', include(get_docs_urls(router, 'api-docs'), 'api-docs')),
+        url(r'^api/', include((router_urls, 'api'), 'api')),
+        url(r'^api/', include((get_docs_urls(router, 'api-docs'), 'api-docs'), 'api-docs')),
     ]
     return urlpatterns
