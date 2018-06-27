@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
+from lepo.parameter import Parameter
 from lepo.utils import maybe_resolve
 
 
@@ -35,7 +36,7 @@ class Operation:
         This is because we end up passing parameters to the handler by name anyway,
         so any duplicate names, even if they had different locations, would be horribly mangled.
 
-        :rtype: list[dict]
+        :rtype: list[Parameter]
         """
 
         parameters = OrderedDict()
@@ -45,8 +46,9 @@ class Operation:
         ):
             source = maybe_resolve(source, self.router.resolve_reference)
             for parameter in source:
-                parameter = maybe_resolve(parameter, self.router.resolve_reference)
-                parameters[parameter['name']] = parameter
+                parameter_data = maybe_resolve(parameter, self.router.resolve_reference)
+                parameter = Parameter(data=parameter_data)
+                parameters[parameter.name] = parameter
 
         return list(parameters.values())
 

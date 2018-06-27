@@ -20,6 +20,7 @@ paths:
 """
 
 
+# TODO: add OpenAPI 3 version of this test
 def test_text_body_type(rf):
     router = Router(yaml.safe_load(JSONIFY_DOC))
     operation = router.get_path('/jsonify').get_operation('post')

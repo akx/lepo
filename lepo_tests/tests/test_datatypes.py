@@ -28,7 +28,10 @@ DATA_EXAMPLES = [
 
 @pytest.mark.parametrize('case', DATA_EXAMPLES)
 def test_data(case):
-    parsed = cast_primitive_value(case['spec'], case['input'])
+    spec = case['spec']
+    type = spec.get('type')
+    format = spec.get('format')
+    parsed = cast_primitive_value(type, format, case['input'])
     assert parsed == case['output']
 
 
