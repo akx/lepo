@@ -2,7 +2,7 @@
 *.egg-info/
 *.py[cod]
 *.sqlite3
-.cache
+.*cache
 .coverage
 .coverage.*
 .hypothesis/
