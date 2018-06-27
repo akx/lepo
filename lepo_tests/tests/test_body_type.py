@@ -1,7 +1,7 @@
 import yaml
 
 from lepo.api_info import APIInfo
-from lepo.parameters import read_parameters
+from lepo.parameter_utils import read_parameters
 from lepo.router import Router
 
 JSONIFY_DOC = """

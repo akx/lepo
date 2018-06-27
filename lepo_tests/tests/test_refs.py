@@ -3,7 +3,7 @@ import json
 import pytest
 
 from lepo.api_info import APIInfo
-from lepo.parameters import read_parameters
+from lepo.parameter_utils import read_parameters
 from lepo_tests.tests.utils import get_router
 
 lil_bub = {'name': 'Lil Bub', 'petType': 'Cat', 'huntingSkill': 'lazy'}

@@ -3,7 +3,7 @@ from django.views import View
 
 from lepo.api_info import APIInfo
 from lepo.excs import InvalidOperation, ExceptionalResponse
-from lepo.parameters import read_parameters
+from lepo.parameter_utils import read_parameters
 from lepo.utils import snake_case
 
 

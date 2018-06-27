@@ -5,7 +5,7 @@ from jsonschema import ValidationError
 
 from lepo.api_info import APIInfo
 from lepo.excs import ErroneousParameters, MissingParameter
-from lepo.parameters import cast_parameter_value, read_parameters
+from lepo.parameter_utils import cast_parameter_value, read_parameters
 from lepo_tests.tests.utils import get_router
 
 
