@@ -1,0 +1,144 @@
+openapi: 3.0.0
+servers: []
+paths:
+  /upload:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        default:
+          description: Default response
+  /greet:
+    get:
+      operationId: greet
+      parameters:
+        - name: greeting
+          in: query
+          schema:
+            type: string
+            default: henlo
+        - name: greetee
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Default response
+  /multiple-tags:
+    get:
+      parameters:
+        - name: tag
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        default:
+          description: Default response
+  /invalid-collection-format:
+    get:
+      parameters:
+        - name: blep
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        default:
+          description: Default response
+  /add-numbers:
+    get:
+      parameters:
+        - name: a
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: b
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        default:
+          description: Default response
+  /header-parameter:
+    get:
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Default response
+  /cascade-parameters:
+    parameters:
+      - name: a
+        in: query
+        required: true
+        schema:
+          type: integer
+    get:
+      parameters:
+        - name: b
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        default:
+          description: Default response
+  /cascade-parameter-override:
+    parameters:
+      - name: a
+        in: query
+        schema:
+          type: integer
+    get:
+      parameters:
+        - name: a
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Default response
+  /parameter-reference:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/age'
+      responses:
+        default:
+          description: Default response
+  /parameters-reference:
+    get:
+      parameters:
+        $ref: '#/paths/~1parameter-reference/get/parameters'
+      responses:
+        default:
+          description: Default response
+info:
+  version: ''
+  title: ''
+components:
+  parameters:
+    age:
+      name: age
+      in: query
+      schema:
+        type: integer
+        minimum: 0

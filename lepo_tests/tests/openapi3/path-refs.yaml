@@ -1,0 +1,14 @@
+openapi: 3.0.0
+servers: []
+paths:
+  /a:
+    get:
+      operationId: foo
+      responses:
+        default:
+          description: Default response
+  /b:
+    $ref: '#/paths/~1a'
+info:
+  version: ''
+  title: ''
