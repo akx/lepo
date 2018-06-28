@@ -62,9 +62,17 @@ def validate_schema(schema, api, value):
         cls=LepoDraft4Validator,
         resolver=api.resolver,
     )
-    if 'discriminator' in schema:  # Swagger Polymorphism support
-        type = value[schema['discriminator']]
-        actual_type = '#/definitions/%s' % type
+    if 'discriminator' in schema:  # Swagger/OpenAPI 3 Polymorphism support
+        discriminator = schema['discriminator']
+        if isinstance(discriminator, dict):  # OpenAPI 3
+            type = value[discriminator['propertyName']]
+            if 'mapping' in discriminator:
+                actual_type = discriminator['mapping'][type]
+            else:
+                actual_type = '#/components/schemas/%s' % type
+        else:
+            type = value[discriminator]
+            actual_type = '#/definitions/%s' % type
         schema = api.resolve_reference(actual_type)
         jsonschema.validate(
             value,
