@@ -1,6 +1,6 @@
 from jsonschema import RefResolver
 
-from lepo.apidef.operation import Swagger2Operation
+from lepo.apidef.operation.swagger import Swagger2Operation
 from lepo.apidef.path import Path
 from lepo.apidef.version import OPENAPI_3, SWAGGER_2, parse_version
 from lepo.utils import maybe_resolve
