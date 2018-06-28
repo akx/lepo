@@ -1,8 +1,8 @@
 import yaml
 
 from lepo.api_info import APIInfo
+from lepo.apidef.doc import APIDefinition
 from lepo.parameter_utils import read_parameters
-from lepo.router import Router
 
 JSONIFY_DOC = """
 swagger: "2.0"
@@ -22,8 +22,8 @@ paths:
 
 # TODO: add OpenAPI 3 version of this test
 def test_text_body_type(rf):
-    router = Router(yaml.safe_load(JSONIFY_DOC))
-    operation = router.get_path('/jsonify').get_operation('post')
+    apidoc = APIDefinition.from_data(yaml.safe_load(JSONIFY_DOC))
+    operation = apidoc.get_path('/jsonify').get_operation('post')
     request = rf.post('/jsonify', 'henlo worl', content_type='text/plain')
     request.api_info = APIInfo(operation=operation)
     params = read_parameters(request, {})

@@ -1,7 +1,6 @@
 import re
 
 from lepo.excs import InvalidOperation
-from lepo.operation import Operation
 from lepo.path_view import PathView
 
 PATH_PLACEHOLDER_REGEX = r'\{(.+?)\}'
@@ -11,15 +10,22 @@ METHODS = {'get', 'put', 'post', 'delete', 'options', 'head', 'patch'}
 
 
 class Path:
-    def __init__(self, router, path, mapping):
-        self.router = router
+    def __init__(self, api, path, mapping):
+        """
+        :type api: lepo.apidef.APIDefinition
+        :type path: str
+        :type mapping: dict
+        """
+        self.api = api
         self.path = path
         self.mapping = mapping
         self.regex = self._build_regex()
         self.name = self._build_view_name()
-        self.view_class = type('%sView' % self.name.title(), (PathView,), {
+
+    def get_view_class(self, router):
+        return type('%sView' % self.name.title(), (PathView,), {
             'path': self,
-            'router': self.router,
+            'router': router,
         })
 
     def _build_view_name(self):
@@ -38,7 +44,7 @@ class Path:
         operation_data = self.mapping.get(method.lower())
         if not operation_data:
             raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
-        return Operation(router=self.router, path=self, data=operation_data, method=method)
+        return self.api.operation_class(api=self.api, path=self, data=operation_data, method=method)
 
     def get_operations(self):
         for method in METHODS:

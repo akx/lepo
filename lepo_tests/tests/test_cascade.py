@@ -1,6 +1,6 @@
 import yaml
 
-from lepo.router import Router
+from lepo.apidef.doc import APIDefinition
 
 CASCADE_DOC = """
 swagger: "2.0"
@@ -27,7 +27,7 @@ paths:
 
 
 def test_cascade():
-    router = Router(yaml.safe_load(CASCADE_DOC))
+    router = APIDefinition.from_data(yaml.safe_load(CASCADE_DOC))
     tip_operation = router.get_path('/cows').get_operation('post')
     assert tip_operation.consumes == ['application/x-grass']
     assert tip_operation.produces == ['application/x-moo']

@@ -2,19 +2,21 @@ from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
-from lepo.parameter import Parameter
+from lepo.apidef.parameter import Parameter, Swagger2Parameter
 from lepo.utils import maybe_resolve
 
 
 class Operation:
-    def __init__(self, router, path, method, data):
+    parameter_class = Parameter
+
+    def __init__(self, api, path, method, data):
         """
-        :type router: lepo.router.Router
-        :type path: lepo.path.Path
+        :type api: lepo.apidef.doc.APIDefinition
+        :type path: lepo.apidef.path.Path
         :type method: str
         :type data: dict
         """
-        self.router = router
+        self.api = api
         self.path = path
         self.method = method
         self.data = data
@@ -38,30 +40,39 @@ class Operation:
 
         :rtype: list[Parameter]
         """
+        return list(self.get_parameter_dict().values())
 
+    def get_parameter_dict(self):
         parameters = OrderedDict()
+        for parameter in self._get_regular_parameters():
+            parameters[parameter.name] = parameter
+        return parameters
+
+    def _get_regular_parameters(self):
         for source in (
             self.path.mapping.get('parameters', ()),
             self.data.get('parameters', {}),
         ):
-            source = maybe_resolve(source, self.router.resolve_reference)
+            source = maybe_resolve(source, self.api.resolve_reference)
             for parameter in source:
-                parameter_data = maybe_resolve(parameter, self.router.resolve_reference)
-                parameter = Parameter(data=parameter_data)
-                parameters[parameter.name] = parameter
-
-        return list(parameters.values())
+                parameter_data = maybe_resolve(parameter, self.api.resolve_reference)
+                parameter = self.parameter_class(data=parameter_data, operation=self)
+                yield parameter
 
     def _get_overridable(self, key, default=None):
         # TODO: This probes a little too deeply into the specifics of these objects, I think...
         for obj in (
             self.data,
             self.path.mapping,
-            self.router.api,
+            self.api.doc,
         ):
             if key in obj:
                 return obj[key]
         return default
+
+
+class Swagger2Operation(Operation):
+    parameter_class = Swagger2Parameter
 
     @cached_property
     def consumes(self):

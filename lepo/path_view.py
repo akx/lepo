@@ -16,7 +16,10 @@ class PathView(View):
             operation = self.path.get_operation(request.method)
         except InvalidOperation:
             return self.http_method_not_allowed(request, **kwargs)
-        request.api_info = APIInfo(operation=operation)
+        request.api_info = APIInfo(
+            operation=operation,
+            router=self.router,
+        )
         params = dict(
             (snake_case(name), value)
             for (name, value)

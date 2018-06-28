@@ -1,12 +1,11 @@
 import base64
-import json
 
 import iso8601
 import jsonschema
 from django.utils.encoding import force_bytes, force_text
 
-from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat, MissingParameter
-from lepo.parameter import BaseParameter
+from lepo.apidef.parameter import BaseParameter
+from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.utils import maybe_resolve
 
 COLLECTION_FORMAT_SPLITTERS = {
@@ -16,18 +15,8 @@ COLLECTION_FORMAT_SPLITTERS = {
     'pipes': lambda value: force_text(value).split('|'),
 }
 
-OPENAPI_JSONSCHEMA_VALIDATION_KEYS = (
-    'maximum', 'exclusiveMaximum',
-    'minimum', 'exclusiveMinimum',
-    'maxLength', 'minLength',
-    'pattern',
-    'maxItems', 'minItems',
-    'uniqueItems',
-    'enum', 'multipleOf',
-)
 
-
-def cast_parameter_value(api_info, parameter, value):
+def cast_parameter_value(apidoc, parameter, value):
     if isinstance(parameter, dict):
         parameter = BaseParameter(parameter)
     if parameter.type == 'array':
@@ -38,15 +27,15 @@ def cast_parameter_value(api_info, parameter, value):
                 raise NotImplementedError('unsupported collection format in %r' % parameter)
             value = splitter(value)
         items = parameter.items
-        value = [cast_parameter_value(api_info, items, item) for item in value]
+        value = [cast_parameter_value(apidoc, items, item) for item in value]
     if parameter.schema:
-        schema = maybe_resolve(parameter.schema, api_info.router.resolve_reference)
-        jsonschema.validate(value, schema, resolver=api_info.router.resolver)
+        schema = maybe_resolve(parameter.schema, apidoc.resolve_reference)
+        jsonschema.validate(value, schema, resolver=apidoc.resolver)
         if 'discriminator' in schema:  # Swagger Polymorphism support
             type = value[schema['discriminator']]
             actual_type = '#/definitions/%s' % type
-            schema = api_info.router.resolve_reference(actual_type)
-            jsonschema.validate(value, schema, resolver=api_info.router.resolver)
+            schema = apidoc.resolve_reference(actual_type)
+            jsonschema.validate(value, schema, resolver=apidoc.resolver)
         return value
     value = cast_primitive_value(parameter.type, parameter.format, value)
     jsonschema_validation_object = parameter.validation_keys
@@ -75,51 +64,6 @@ def cast_primitive_value(type, format, value):
     return value
 
 
-def read_body(request):
-    consumes = request.api_info.operation.consumes
-    if request.content_type not in consumes:
-        raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
-            request.content_type,
-            consumes,
-        ))
-    try:
-        if request.content_type == 'application/json':
-            return json.loads(request.body.decode(request.content_params.get('charset', 'UTF-8')))
-        elif request.content_type == 'text/plain':
-            return request.body.decode(request.content_params.get('charset', 'UTF-8'))
-    except Exception as exc:
-        raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
-    raise NotImplementedError('No idea how to parse content-type %s' % request.content_type)  # pragma: no cover
-
-
-def get_parameter_value(request, view_kwargs, param):
-    """
-    :type request: WSGIRequest
-    :type view_kwargs: dict
-    :param param: lepo.parameter.Parameter
-    """
-    if param.location == 'formData' and param.type == 'file':
-        return request.FILES[param.name]
-
-    if param.location in ('query', 'formData'):
-        source = (request.POST if param.location == 'formData' else request.GET)
-        if param.type == 'array' and param.collection_format == 'multi':
-            return source.getlist(param.name)
-        else:
-            return source[param.name]
-
-    if param.location == 'path':
-        return view_kwargs[param.name]
-
-    if param.location == 'body':
-        return read_body(request)
-
-    if param.location == 'header':
-        return request.META['HTTP_%s' % param.name.upper().replace('-', '_')]
-
-    raise NotImplementedError('unsupported `in` value in %r' % param)  # pragma: no cover
-
-
 def read_parameters(request, view_kwargs):
     """
     :param request: HttpRequest with attached api_info
@@ -131,7 +75,7 @@ def read_parameters(request, view_kwargs):
     errors = {}
     for param in request.api_info.operation.parameters:
         try:
-            value = get_parameter_value(request, view_kwargs, param)
+            value = param.get_value(request, view_kwargs)
         except KeyError:
             if param.has_default:
                 params[param.name] = param.default
@@ -140,7 +84,7 @@ def read_parameters(request, view_kwargs):
                 errors[param.name] = MissingParameter('parameter %s is required but missing' % param.name)
             continue
         try:
-            params[param.name] = cast_parameter_value(request.api_info, param, value)
+            params[param.name] = cast_parameter_value(request.api_info.api, param, value)
         except NotImplementedError:
             raise
         except Exception as e:
