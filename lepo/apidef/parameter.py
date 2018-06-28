@@ -1,6 +1,18 @@
 import json
 
+import jsonschema
+from django.utils.encoding import force_text
+
 from lepo.excs import InvalidBodyContent, InvalidBodyFormat
+from lepo.parameter_utils import cast_primitive_value
+from lepo.utils import maybe_resolve
+
+COLLECTION_FORMAT_SPLITTERS = {
+    'csv': lambda value: force_text(value).split(','),
+    'ssv': lambda value: force_text(value).split(' '),
+    'tsv': lambda value: force_text(value).split('\t'),
+    'pipes': lambda value: force_text(value).split('|'),
+}
 
 OPENAPI_JSONSCHEMA_VALIDATION_KEYS = (
     'maximum', 'exclusiveMaximum',
@@ -61,6 +73,47 @@ class BaseParameter:
     def items(self):
         return self.data.get('items')
 
+    def validate_primitive(self, value):
+        jsonschema_validation_object = self.validation_keys
+        if jsonschema_validation_object:
+            jsonschema.validate(value, jsonschema_validation_object)
+        return value
+
+    def validate_schema(self, api, value):
+        schema = maybe_resolve(self.schema, resolve=api.resolve_reference)
+        jsonschema.validate(value, schema, resolver=api.resolver)
+        if 'discriminator' in schema:  # Swagger Polymorphism support
+            type = value[schema['discriminator']]
+            actual_type = '#/definitions/%s' % type
+            schema = api.resolve_reference(actual_type)
+            jsonschema.validate(value, schema, resolver=api.resolver)
+        return value
+
+    def cast_array(self, api, value):
+        if not isinstance(value, list):  # could be a list already if collection format was multi
+            value = self.arrayfy_value(value)
+        items_param = self.__class__(self.items)
+        return [items_param.cast(api, item) for item in value]
+
+    def arrayfy_value(self, value):
+        collection_format = self.collection_format or 'csv'
+        splitter = COLLECTION_FORMAT_SPLITTERS.get(collection_format)
+        if not splitter:
+            raise NotImplementedError('unsupported collection format in %r' % self)
+        value = splitter(value)
+        return value
+
+    def cast(self, api, value):
+        if self.type == 'array':
+            value = self.cast_array(api, value)
+
+        if self.schema:
+            return self.validate_schema(api, value)
+
+        value = cast_primitive_value(self.type, self.format, value)
+        value = self.validate_primitive(value)
+        return value
+
     def get_value(self, request, view_kwargs):  # pragma: no cover
         """
         :type request: WSGIRequest
@@ -87,23 +140,13 @@ class Parameter(BaseParameter):
         return self.location in ('formData', 'body')
 
     def get_value(self, request, view_kwargs):
-        if self.location == 'formData' and self.type == 'file':
-            return request.FILES[self.name]
-
-        if self.location in ('query', 'formData'):
-            source = (request.POST if self.location == 'formData' else request.GET)
-            if self.type == 'array' and self.collection_format == 'multi':
-                return source.getlist(self.name)
-            else:
-                return source[self.name]
-
         if self.location == 'path':
             return view_kwargs[self.name]
 
         if self.location == 'header':
             return request.META['HTTP_%s' % self.name.upper().replace('-', '_')]
 
-        raise NotImplementedError('unsupported `in` value in %r' % self)  # pragma: no cover
+        raise NotImplementedError('unsupported `in` value %r in %r' % (self.location, self))  # pragma: no cover
 
 
 class Swagger2Parameter(Parameter):
@@ -111,6 +154,17 @@ class Swagger2Parameter(Parameter):
     def get_value(self, request, view_kwargs):
         if self.location == 'body':
             return self.read_body(request)
+
+        if self.location == 'formData' and self.type == 'file':
+            return request.FILES[self.name]
+
+        if self.location in ('query', 'formData'):
+            source = (request.POST if self.location == 'formData' else request.GET)
+            print(self.name, self.data)
+            if self.type == 'array' and self.collection_format == 'multi':
+                return source.getlist(self.name)
+            else:
+                return source[self.name]
 
         return super().get_value(request, view_kwargs)
 
@@ -122,11 +176,24 @@ class Swagger2Parameter(Parameter):
                 consumes,
             ))
 
-        try:
-            if request.content_type == 'application/json':
-                return json.loads(request.body.decode(request.content_params.get('charset', 'UTF-8')))
-            elif request.content_type == 'text/plain':
-                return request.body.decode(request.content_params.get('charset', 'UTF-8'))
-        except Exception as exc:
-            raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
-        raise NotImplementedError('No idea how to parse content-type %s' % request.content_type)  # pragma: no cover
+        return read_body(request, self)
+
+
+def read_body(request, parameter=None):
+    if parameter:
+        if parameter.type == 'binary':
+            return request.body.read()
+    try:
+        if request.content_type == 'application/json':
+            return json.loads(request.body.decode(request.content_params.get('charset', 'UTF-8')))
+        elif request.content_type == 'text/plain':
+            return request.body.decode(request.content_params.get('charset', 'UTF-8'))
+        if request.content_type == 'multipart/form-data':
+            # TODO: this definitely doesn't handle multiple values for the same key correctly
+            data = dict()
+            data.update(request.POST.items())
+            data.update(request.FILES.items())
+            return data
+    except Exception as exc:
+        raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
+    raise NotImplementedError('No idea how to parse content-type %s' % request.content_type)  # pragma: no cover
