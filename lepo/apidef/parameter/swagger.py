@@ -2,7 +2,7 @@ import jsonschema
 from django.utils.encoding import force_text
 
 from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
-from lepo.apidef.parameter.utils import read_body
+from lepo.apidef.parameter.utils import read_body, validate_schema
 from lepo.excs import InvalidBodyFormat
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import maybe_resolve
@@ -67,13 +67,7 @@ class Swagger2BaseParameter(BaseParameter):
 
     def validate_schema(self, api, value):
         schema = maybe_resolve(self.schema, resolve=api.resolve_reference)
-        jsonschema.validate(value, schema, resolver=api.resolver)
-        if 'discriminator' in schema:  # Swagger Polymorphism support
-            type = value[schema['discriminator']]
-            actual_type = '#/definitions/%s' % type
-            schema = api.resolve_reference(actual_type)
-            jsonschema.validate(value, schema, resolver=api.resolver)
-        return value
+        return validate_schema(schema, api, value)
 
     def arrayfy_value(self, value):
         collection_format = self.collection_format or 'csv'
@@ -86,7 +80,7 @@ class Swagger2BaseParameter(BaseParameter):
     def cast_array(self, api, value):
         if not isinstance(value, list):  # could be a list already if collection format was multi
             value = self.arrayfy_value(value)
-        items_param = Swagger2BaseParameter(self.items)
+        items_param = Swagger2BaseParameter(self.items, api=api)
         return [items_param.cast(api, item) for item in value]
 
     def cast(self, api, value):
@@ -118,7 +112,6 @@ class Swagger2Parameter(Swagger2BaseParameter, BaseTopParameter):
 
         if self.location in ('query', 'formData'):
             source = (request.POST if self.location == 'formData' else request.GET)
-            print(self.name, self.data)
             if self.type == 'array' and self.collection_format == 'multi':
                 return source.getlist(self.name)
             else:

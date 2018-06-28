@@ -1,6 +1,7 @@
 class BaseParameter:
-    def __init__(self, data):
+    def __init__(self, data, api=None):
         self.data = data
+        self.api = api
 
     def __repr__(self):
         return '<%s (%r)>' % (self.__class__.__name__, self.data)
@@ -33,8 +34,8 @@ class BaseTopParameter(BaseParameter):
     Top-level Parameter, such as in an operation
     """
 
-    def __init__(self, data, operation=None):
-        super(BaseTopParameter, self).__init__(data)
+    def __init__(self, data, api=None, operation=None):
+        super(BaseTopParameter, self).__init__(data, api=api)
         self.operation = operation
 
     @property

@@ -55,7 +55,7 @@ class Operation:
             source = maybe_resolve(source, self.api.resolve_reference)
             for parameter in source:
                 parameter_data = maybe_resolve(parameter, self.api.resolve_reference)
-                parameter = self.parameter_class(data=parameter_data, operation=self)
+                parameter = self.parameter_class(data=parameter_data, operation=self, api=self.api)
                 yield parameter
 
     def _get_overridable(self, key, default=None):

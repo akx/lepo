@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import UploadedFile
 from jsonschema import ValidationError
 
 from lepo.api_info import APIInfo
+from lepo.apidef.doc import Swagger2APIDefinition
 from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.parameter_utils import cast_parameter_value, read_parameters
 from lepo_tests.tests.utils import DOC_VERSIONS, get_router
@@ -12,13 +13,13 @@ routers = pytest.mark.parametrize('router', [
     get_router('{}/parameter-test.yaml'.format(doc_version))
     for doc_version
     in DOC_VERSIONS
-])
+], ids=DOC_VERSIONS)
 
 
 def test_parameter_validation():
     with pytest.raises(ValidationError):
         cast_parameter_value(
-            None,
+            Swagger2APIDefinition({}),
             {
                 'type': 'array',
                 'collectionFormat': 'ssv',
