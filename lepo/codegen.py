@@ -2,8 +2,8 @@ import argparse
 import sys
 
 import yaml
-from six import StringIO
 from django.utils.text import camel_case_to_spaces
+from six import StringIO
 
 from lepo.router import Router
 

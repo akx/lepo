@@ -1,5 +1,5 @@
 from lepo.apidef.operation.base import Operation
-from lepo.apidef.parameter.openapi import OpenAPI3Parameter, OpenAPI3BodyParameter
+from lepo.apidef.parameter.openapi import OpenAPI3BodyParameter, OpenAPI3Parameter
 from lepo.utils import maybe_resolve
 
 

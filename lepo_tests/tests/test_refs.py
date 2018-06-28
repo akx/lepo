@@ -4,7 +4,7 @@ import pytest
 
 from lepo.api_info import APIInfo
 from lepo.parameter_utils import read_parameters
-from lepo_tests.tests.utils import get_router, doc_versions
+from lepo_tests.tests.utils import doc_versions, get_router
 
 lil_bub = {'name': 'Lil Bub', 'petType': 'Cat', 'huntingSkill': 'lazy'}
 hachiko = {'name': 'Hachiko', 'petType': 'Dog', 'packSize': 83}

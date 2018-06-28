@@ -4,6 +4,11 @@ import django.conf
 import pytest
 from django.utils.crypto import get_random_string
 
+from lepo.excs import InvalidBodyContent, InvalidBodyFormat
+from lepo_tests.models import Pet
+from lepo_tests.tests.utils import get_data_from_response
+from lepo_tests.utils import urlconf_map
+
 try:
     # Django 2
     from django.urls import clear_url_caches, set_urlconf
@@ -11,10 +16,6 @@ except:  # pragma: no cover
     # Django 1.11
     from django.core.urlresolvers import clear_url_caches, set_urlconf
 
-from lepo.excs import InvalidBodyContent, InvalidBodyFormat
-from lepo_tests.models import Pet
-from lepo_tests.tests.utils import get_data_from_response
-from lepo_tests.utils import urlconf_map
 
 # There's some moderate Py.test and Python magic going on here.
 # `urlconf_map` is a map of dynamically generated URLconf modules

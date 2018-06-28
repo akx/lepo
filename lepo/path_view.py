@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from lepo.api_info import APIInfo
-from lepo.excs import InvalidOperation, ExceptionalResponse
+from lepo.excs import ExceptionalResponse, InvalidOperation
 from lepo.parameter_utils import read_parameters
 from lepo.utils import snake_case
 

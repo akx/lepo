@@ -1,4 +1,4 @@
-from collections import OrderedDict, namedtuple
+from collections import namedtuple, OrderedDict
 
 from django.utils.functional import cached_property
 

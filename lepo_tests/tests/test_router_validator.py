@@ -1,8 +1,8 @@
 import pytest
 
-from lepo.excs import RouterValidationError, InvalidParameterDefinition
+from lepo.excs import InvalidParameterDefinition, RouterValidationError
 from lepo.validate import validate_router
-from lepo_tests.tests.utils import get_router, doc_versions
+from lepo_tests.tests.utils import doc_versions, get_router
 
 
 @doc_versions

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from lepo.excs import RouterValidationError, MissingHandler, InvalidParameterDefinition
+from lepo.excs import InvalidParameterDefinition, MissingHandler, RouterValidationError
 
 
 def validate_router(router):

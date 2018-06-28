@@ -1,7 +1,7 @@
 from django.http.response import HttpResponse
 
 from lepo.excs import ExceptionalResponse
-from lepo_tests.tests.utils import get_router, doc_versions
+from lepo_tests.tests.utils import doc_versions, get_router
 
 
 def greet(request, greeting, greetee):
