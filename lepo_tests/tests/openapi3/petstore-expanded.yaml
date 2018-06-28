@@ -27,6 +27,7 @@ paths:
           description: tags to filter by
           required: false
           style: form
+          explode: false
           schema:
             type: array
             items:
@@ -56,6 +57,7 @@ paths:
     post:
       description: Creates a new pet in the store.  Duplicates are allowed
       operationId: addPet
+      x-lepo-body-name: pet
       responses:
         '200':
           description: pet response
@@ -126,6 +128,7 @@ paths:
     patch:
       description: updates a pet by ID
       operationId: updatePet
+      x-lepo-body-name: pet
       parameters:
         - name: id
           in: path

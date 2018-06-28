@@ -18,5 +18,5 @@ def get_data_from_response(response, status=200):
     return json.loads(response.content.decode('utf-8'))
 
 
-DOC_VERSIONS = ['swagger2']
+DOC_VERSIONS = ['swagger2', 'openapi3']
 doc_versions = pytest.mark.parametrize('doc_version', DOC_VERSIONS)

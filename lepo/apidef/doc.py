@@ -1,5 +1,6 @@
 from jsonschema import RefResolver
 
+from lepo.apidef.operation.openapi import OpenAPI3Operation
 from lepo.apidef.operation.swagger import Swagger2Operation
 from lepo.apidef.path import Path
 from lepo.apidef.version import OPENAPI_3, SWAGGER_2, parse_version
@@ -86,10 +87,15 @@ class APIDefinition:
         if version == SWAGGER_2:
             return Swagger2APIDefinition(data)
         if version == OPENAPI_3:
-            raise NotImplementedError('OpenAPI 3 docs are not implemented just yet')
+            return OpenAPI3APIDefinition(data)
         raise NotImplementedError('...')  # pragma: no cover
 
 
 class Swagger2APIDefinition(APIDefinition):
     version = SWAGGER_2
     operation_class = Swagger2Operation
+
+
+class OpenAPI3APIDefinition(APIDefinition):
+    version = OPENAPI_3
+    operation_class = OpenAPI3Operation

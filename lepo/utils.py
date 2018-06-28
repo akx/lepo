@@ -1,3 +1,5 @@
+from fnmatch import fnmatch
+
 from django.utils.text import camel_case_to_spaces
 
 
@@ -16,3 +18,14 @@ def maybe_resolve(object, resolve):
 
 def snake_case(string):
     return camel_case_to_spaces(string).replace(' ', '_')
+
+
+def match_content_type(content_type, content_type_mapping):
+    for map_content_type in content_type_mapping:
+        if fnmatch(content_type, map_content_type):
+            return map_content_type
+
+
+def get_content_type_specificity(content_type):
+    major, minor = content_type.split('/', 1)
+    return (100 if major == '*' else 0) + (10 if minor == '*' else 0)

@@ -4,6 +4,7 @@ paths:
   /cat:
     post:
       operationId: emkitten
+      x-lepo-body-name: cat
       requestBody:
         content:
           application/json:
@@ -15,6 +16,7 @@ paths:
   /pet:
     post:
       operationId: pet a pet
+      x-lepo-body-name: pet
       requestBody:
         content:
           application/json:

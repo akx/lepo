@@ -5,6 +5,7 @@ from jsonschema import ValidationError
 
 from lepo.api_info import APIInfo
 from lepo.apidef.doc import Swagger2APIDefinition
+from lepo.apidef.parameter.openapi import OpenAPI3BodyParameter
 from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.parameter_utils import cast_parameter_value, read_parameters
 from lepo_tests.tests.utils import DOC_VERSIONS, get_router
@@ -38,7 +39,9 @@ def test_files(rf, router):
         'file': ContentFile(b'foo', name='foo.txt'),
     })
     request.api_info = APIInfo(router.get_path('/upload').get_operation('post'))
-    parameters = read_parameters(request, {})
+    parameters = read_parameters(request)
+    if OpenAPI3BodyParameter.name in parameters:  # Peel into the body parameter
+        parameters = parameters[OpenAPI3BodyParameter.name]
     assert isinstance(parameters['file'], UploadedFile)
 
 

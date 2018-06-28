@@ -5,9 +5,8 @@ paths:
     post:
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          multipart/form-data:
             schema:
-              type: object
               properties:
                 file:
                   type: string
@@ -50,6 +49,7 @@ paths:
       parameters:
         - name: blep
           in: query
+          style: very nice
           schema:
             type: array
             items:
