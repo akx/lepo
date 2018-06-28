@@ -23,7 +23,7 @@ class PathView(View):
         params = dict(
             (snake_case(name), value)
             for (name, value)
-            in read_parameters(request, kwargs).items()
+            in read_parameters(request, kwargs, capture_errors=True).items()
         )
         handler = request.api_info.router.get_handler(operation.id)
         try:

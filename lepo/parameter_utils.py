@@ -39,13 +39,16 @@ def cast_primitive_value(type, format, value):
     return value
 
 
-def read_parameters(request, view_kwargs):
+def read_parameters(request, view_kwargs=None, capture_errors=False):
     """
     :param request: HttpRequest with attached api_info
     :type request: HttpRequest
     :type view_kwargs: dict[str, object]
+    :type capture_errors: bool
     :rtype: dict[str, object]
     """
+    if view_kwargs is None:
+        view_kwargs = {}
     params = {}
     errors = {}
     for param in request.api_info.operation.parameters:
@@ -63,6 +66,8 @@ def read_parameters(request, view_kwargs):
         except NotImplementedError:
             raise
         except Exception as e:
+            if not capture_errors:
+                raise
             errors[param.name] = e
     if errors:
         raise ErroneousParameters(errors, params)
