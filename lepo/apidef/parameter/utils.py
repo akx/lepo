@@ -2,10 +2,27 @@ import json
 
 import jsonschema
 from django.core.files import File
+from django.utils.encoding import force_text
 from jsonschema import Draft4Validator
 
 from lepo.excs import InvalidBodyContent
 from lepo.utils import maybe_resolve
+
+
+def comma_split(value):
+    return force_text(value).split(',')
+
+
+def space_split(value):
+    return force_text(value).split(' ')
+
+
+def tab_split(value):
+    return force_text(value).split('\t')
+
+
+def pipe_split(value):
+    return force_text(value).split('|')
 
 
 def read_body(request, parameter=None):

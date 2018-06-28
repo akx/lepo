@@ -1,17 +1,16 @@
 import jsonschema
-from django.utils.encoding import force_text
 
 from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
-from lepo.apidef.parameter.utils import read_body, validate_schema
+from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, tab_split, validate_schema
 from lepo.excs import InvalidBodyFormat
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import maybe_resolve
 
 COLLECTION_FORMAT_SPLITTERS = {
-    'csv': lambda value: force_text(value).split(','),
-    'ssv': lambda value: force_text(value).split(' '),
-    'tsv': lambda value: force_text(value).split('\t'),
-    'pipes': lambda value: force_text(value).split('|'),
+    'csv': comma_split,
+    'ssv': space_split,
+    'tsv': tab_split,
+    'pipes': pipe_split,
 }
 
 OPENAPI_JSONSCHEMA_VALIDATION_KEYS = (
