@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 
 from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
 from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, validate_schema
-from lepo.excs import InvalidBodyFormat
+from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import get_content_type_specificity, match_content_type, maybe_resolve
 
@@ -111,12 +111,12 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
             }.get(style)
 
         elif self.location == 'header':
-            if style != 'simple':
-                raise ValueError('Header parameters always use the simple style, says the spec')
+            if style != 'simple':  # pragma: no cover
+                raise InvalidParameterDefinition('Header parameters always use the simple style, says the spec')
             value = request.META['HTTP_%s' % self.name.upper().replace('-', '_')]
         elif self.location == 'cookie':
-            if style != 'form':
-                raise ValueError('Cookie parameters always use the form style, says the spec')
+            if style != 'form':  # pragma: no cover
+                raise InvalidParameterDefinition('Cookie parameters always use the form style, says the spec')
             value = request.COOKIES.get(self.name)
         elif self.location == 'path':
             value = view_kwargs[self.name]
@@ -131,7 +131,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
 
         if type in ('array', 'object'):
             if not splitter:
-                raise NotImplementedError('The location/style/explode combination %s/%s/%s is not supported' % (
+                raise InvalidParameterDefinition('The location/style/explode combination %s/%s/%s is not supported' % (
                     self.location,
                     style,
                     explode,

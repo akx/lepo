@@ -1,6 +1,7 @@
 import base64
 
 import iso8601
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import force_bytes, force_text
 
 from lepo.excs import ErroneousParameters, MissingParameter
@@ -63,7 +64,7 @@ def read_parameters(request, view_kwargs=None, capture_errors=False):  # noqa: C
             continue
         try:
             params[param.name] = param.cast(request.api_info.api, value)
-        except NotImplementedError:
+        except (NotImplementedError, ImproperlyConfigured):
             raise
         except Exception as e:
             if not capture_errors:

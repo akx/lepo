@@ -1,4 +1,5 @@
 import pytest
+from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
 from jsonschema import ValidationError
@@ -74,7 +75,7 @@ def test_required(rf, router):
 def test_invalid_collection_format(rf, router):
     request = rf.get('/invalid-collection-format?blep=foo')
     request.api_info = APIInfo(router.get_path('/invalid-collection-format').get_operation('get'))
-    with pytest.raises(NotImplementedError):
+    with pytest.raises((NotImplementedError, ImproperlyConfigured)):
         read_parameters(request)
 
 

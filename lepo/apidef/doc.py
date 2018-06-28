@@ -88,7 +88,7 @@ class APIDefinition:
             return Swagger2APIDefinition(data)
         if version == OPENAPI_3:
             return OpenAPI3APIDefinition(data)
-        raise NotImplementedError('...')  # pragma: no cover
+        raise NotImplementedError('We can never get here.')  # pragma: no cover
 
 
 class Swagger2APIDefinition(APIDefinition):

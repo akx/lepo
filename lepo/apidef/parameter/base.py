@@ -1,3 +1,6 @@
+from lepo.excs import InvalidParameterDefinition
+
+
 class BaseParameter:
     def __init__(self, data, api=None):
         self.data = data
@@ -18,15 +21,15 @@ class BaseParameter:
     def items(self):
         return self.data.get('items')
 
-    def cast(self, api, value):
-        raise NotImplementedError('...')
+    def cast(self, api, value):  # pragma: no cover
+        raise NotImplementedError('Subclasses must implement cast')
 
     def get_value(self, request, view_kwargs):  # pragma: no cover
         """
         :type request: WSGIRequest
         :type view_kwargs: dict
         """
-        raise NotImplementedError('...')
+        raise NotImplementedError('Subclasses must implement get_value')
 
 
 class BaseTopParameter(BaseParameter):
@@ -47,4 +50,4 @@ class BaseTopParameter(BaseParameter):
         return self.location in ('formData', 'body')
 
     def get_value(self, request, view_kwargs):
-        raise NotImplementedError('unsupported `in` value %r in %r' % (self.location, self))  # pragma: no cover
+        raise InvalidParameterDefinition('unsupported `in` value %r in %r' % (self.location, self))  # pragma: no cover
