@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from lepo.excs import RouterValidationError, MissingHandler, InvalidParameterDefinition
+from lepo.excs import InvalidParameterDefinition, MissingHandler, RouterValidationError
 
 
 def validate_router(router):
@@ -14,10 +14,10 @@ def validate_router(router):
                 errors[operation].append(e)
 
             for param in operation.parameters:
-                if param['in'] == 'header' and '_' in param['name']:  # See https://github.com/akx/lepo/issues/23
+                if param.location == 'header' and '_' in param.name:  # See https://github.com/akx/lepo/issues/23
                     ipd = InvalidParameterDefinition(
                         '{name}: Header parameter names may not contain underscores (Django bug 25048)'.format(
-                            name=param['name'],
+                            name=param.name,
                         )
                     )
                     errors[operation].append(ipd)

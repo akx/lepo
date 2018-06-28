@@ -2,5 +2,6 @@ swagger: "2.0"
 paths:
   /a:
     get:
+      operationId: foo
   /b:
     $ref: '#/paths/~1a'

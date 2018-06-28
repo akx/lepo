@@ -1,26 +1,33 @@
 import json
 
+import django.conf
 import pytest
 from django.utils.crypto import get_random_string
-import django.conf
-from django.core.urlresolvers import clear_url_caches, set_urlconf
 
 from lepo.excs import InvalidBodyContent, InvalidBodyFormat
 from lepo_tests.models import Pet
 from lepo_tests.tests.utils import get_data_from_response
+from lepo_tests.utils import urlconf_map
 
-# -- Start of some minor Pytest magic to parametrize the entirety
-#    of this module to run on multiple urlconfs.
+try:
+    # Django 2
+    from django.urls import clear_url_caches, set_urlconf
+except:  # pragma: no cover
+    # Django 1.11
+    from django.core.urlresolvers import clear_url_caches, set_urlconf
 
-API_URLS = [
-    'lepo_tests.urls_bare',
-    'lepo_tests.urls_cb',
-]
+
+# There's some moderate Py.test and Python magic going on here.
+# `urlconf_map` is a map of dynamically generated URLconf modules
+# that don't actually exist on disk, and this fixture ensures all
+# tests in this module which request the `api_urls` fixture (defined below)
+# actually get parametrized to include all versions in the map.
 
 
 def pytest_generate_tests(metafunc):
     if 'api_urls' in metafunc.fixturenames:
-        metafunc.parametrize('api_urls', API_URLS, indirect=True)
+        module_names = [m.__name__ for m in urlconf_map.values()]
+        metafunc.parametrize('api_urls', module_names, indirect=True)
 
 
 @pytest.fixture

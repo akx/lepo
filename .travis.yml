@@ -9,6 +9,7 @@ python:
 #  - "3.6"
 env:
   - DJANGO=django~=1.11.0
+  - DJANGO=django~=2.0
 install:
   - pip install -r requirements-dev.txt
   - "pip install $DJANGO -e ."

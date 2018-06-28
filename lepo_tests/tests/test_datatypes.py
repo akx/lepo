@@ -3,7 +3,9 @@ from datetime import date, datetime
 import pytest
 from iso8601 import UTC
 
-from lepo.parameters import cast_parameter_value, cast_primitive_value
+from lepo.apidef.doc import Swagger2APIDefinition
+from lepo.parameter_utils import cast_primitive_value
+from lepo_tests.tests.utils import cast_parameter_value
 
 DATA_EXAMPLES = [
     {'spec': {'type': 'integer'}, 'input': '5041211', 'output': 5041211},
@@ -28,23 +30,27 @@ DATA_EXAMPLES = [
 
 @pytest.mark.parametrize('case', DATA_EXAMPLES)
 def test_data(case):
-    parsed = cast_primitive_value(case['spec'], case['input'])
+    spec = case['spec']
+    type = spec.get('type')
+    format = spec.get('format')
+    parsed = cast_primitive_value(type, format, case['input'])
     assert parsed == case['output']
 
 
 def test_collection_formats():
+    apidoc = Swagger2APIDefinition({})
     assert cast_parameter_value(
-        None,
+        apidoc,
         {'type': 'array', 'collectionFormat': 'tsv', 'items': {'type': 'boolean'}},
         'true\ttrue\tfalse',
     ) == [True, True, False]
     assert cast_parameter_value(
-        None,
+        apidoc,
         {'type': 'array', 'collectionFormat': 'ssv', 'items': {'type': 'string'}},
         'what it do',
     ) == ['what', 'it', 'do']
     assert cast_parameter_value(
-        None,
+        apidoc,
         {
             'type': 'array',
             'collectionFormat': 'pipes',

@@ -1,0 +1,17 @@
+openapi: 3.0.0
+servers: []
+paths:
+  /cat:
+    post:
+      operationId: hello
+      parameters:
+        - name: greeting_text
+          in: header
+          schema:
+            type: string
+      responses:
+        default:
+          description: Default response
+info:
+  version: ''
+  title: ''

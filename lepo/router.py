@@ -1,16 +1,14 @@
 from collections import Iterable
-from copy import deepcopy
 from functools import reduce
 from importlib import import_module
 from inspect import isfunction, ismethod
 
 from django.conf.urls import url
 from django.http import HttpResponse
-from jsonschema import RefResolver
 
+from lepo.apidef.doc import APIDefinition
 from lepo.excs import MissingHandler
-from lepo.path import Path
-from lepo.utils import maybe_resolve, snake_case
+from lepo.utils import snake_case
 
 
 def root_view(request):
@@ -18,19 +16,17 @@ def root_view(request):
 
 
 class Router:
-    path_class = Path
 
     def __init__(self, api):
         """
         Instantiate a new Lepo router.
 
-        :param api: The OpenAPI definition object.
-        :type api: dict
+        :param api: An APIDefinition object
+        :type api: APIDefinition
         """
-        self.api = deepcopy(api)
-        self.api.pop('host', None)
+        assert isinstance(api, APIDefinition)
+        self.api = api
         self.handlers = {}
-        self.resolver = RefResolver('', self.api)
 
     @classmethod
     def from_file(cls, filename):
@@ -43,35 +39,17 @@ class Router:
         :param filename: The filename to read.
         :rtype: Router
         """
-        with open(filename) as infp:
-            if filename.endswith('.yaml') or filename.endswith('.yml'):
-                import yaml
-                data = yaml.safe_load(infp)
-            else:
-                import json
-                data = json.load(infp)
-        return cls(data)
+        return cls(api=APIDefinition.from_file(filename))
 
     def get_path(self, path):
-        """
-        Construct a Path object from a path string.
-
-        The Path string must be declared in the API.
-
-        :type path: str
-        :rtype: lepo.path.Path
-        """
-        mapping = maybe_resolve(self.api['paths'][path], self.resolve_reference)
-        return self.path_class(router=self, path=path, mapping=mapping)
+        return self.api.get_path(path)
 
     def get_paths(self):
-        """
-        Iterate over all Path objects declared by the API.
-
-        :rtype: Iterable[lepo.path.Path]
-        """
-        for path in self.api['paths']:
+        for path in self.api.get_path_names():
             yield self.get_path(path)
+
+    def get_path_view_class(self, path):
+        return self.get_path(path).get_view_class(router=self)
 
     def get_urls(
         self,
@@ -110,14 +88,14 @@ class Router:
                 return reduce(lambda view, decorator: decorator(view), decorators, view)
 
         urls = []
-        for path in self.get_paths():
+        for path in self.api.get_paths():
             regex = path.regex
             if optional_trailing_slash:
                 regex = regex.rstrip('$')
                 if not regex.endswith('/'):
                     regex += '/'
                 regex += '?$'
-            view = decorate(path.view_class.as_view())
+            view = decorate(path.get_view_class(router=self).as_view())
             urls.append(url(regex, view, name=name_template.format(name=path.name)))
 
         if root_view_name:
@@ -172,14 +150,3 @@ class Router:
                 continue
             if isfunction(value) or ismethod(value):
                 self.handlers[name] = value
-
-    def resolve_reference(self, ref):
-        """
-        Resolve a JSON Pointer object reference to the object itself.
-
-        :param ref: Reference string (`#/foo/bar`, for instance)
-        :return: The object, if found
-        :raises jsonschema.exceptions.RefResolutionError: if there is trouble resolving the reference
-        """
-        url, resolved = self.resolver.resolve(ref)
-        return resolved

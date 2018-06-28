@@ -2,8 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from lepo.api_info import APIInfo
-from lepo.excs import InvalidOperation, ExceptionalResponse
-from lepo.parameters import read_parameters
+from lepo.excs import ExceptionalResponse, InvalidOperation
+from lepo.parameter_utils import read_parameters
 from lepo.utils import snake_case
 
 
@@ -16,11 +16,14 @@ class PathView(View):
             operation = self.path.get_operation(request.method)
         except InvalidOperation:
             return self.http_method_not_allowed(request, **kwargs)
-        request.api_info = APIInfo(operation=operation)
+        request.api_info = APIInfo(
+            operation=operation,
+            router=self.router,
+        )
         params = dict(
             (snake_case(name), value)
             for (name, value)
-            in read_parameters(request, kwargs).items()
+            in read_parameters(request, kwargs, capture_errors=True).items()
         )
         handler = request.api_info.router.get_handler(operation.id)
         try:

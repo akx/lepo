@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections.__init__ import OrderedDict
 
 from django.utils.functional import cached_property
 
@@ -6,14 +6,16 @@ from lepo.utils import maybe_resolve
 
 
 class Operation:
-    def __init__(self, router, path, method, data):
+    parameter_class = None  # This should never be used
+
+    def __init__(self, api, path, method, data):
         """
-        :type router: lepo.router.Router
-        :type path: lepo.path.Path
+        :type api: lepo.apidef.doc.APIDefinition
+        :type path: lepo.apidef.path.Path
         :type method: str
         :type data: dict
         """
-        self.router = router
+        self.api = api
         self.path = path
         self.method = method
         self.data = data
@@ -35,42 +37,34 @@ class Operation:
         This is because we end up passing parameters to the handler by name anyway,
         so any duplicate names, even if they had different locations, would be horribly mangled.
 
-        :rtype: list[dict]
+        :rtype: list[Parameter]
         """
+        return list(self.get_parameter_dict().values())
 
+    def get_parameter_dict(self):
         parameters = OrderedDict()
+        for parameter in self._get_regular_parameters():
+            parameters[parameter.name] = parameter
+        return parameters
+
+    def _get_regular_parameters(self):
         for source in (
             self.path.mapping.get('parameters', ()),
             self.data.get('parameters', {}),
         ):
-            source = maybe_resolve(source, self.router.resolve_reference)
+            source = maybe_resolve(source, self.api.resolve_reference)
             for parameter in source:
-                parameter = maybe_resolve(parameter, self.router.resolve_reference)
-                parameters[parameter['name']] = parameter
-
-        return list(parameters.values())
+                parameter_data = maybe_resolve(parameter, self.api.resolve_reference)
+                parameter = self.parameter_class(data=parameter_data, operation=self, api=self.api)
+                yield parameter
 
     def _get_overridable(self, key, default=None):
         # TODO: This probes a little too deeply into the specifics of these objects, I think...
         for obj in (
             self.data,
             self.path.mapping,
-            self.router.api,
+            self.api.doc,
         ):
             if key in obj:
                 return obj[key]
         return default
-
-    @cached_property
-    def consumes(self):
-        value = self._get_overridable('consumes', [])
-        if not isinstance(value, (list, tuple)):
-            raise TypeError('`consumes` must be a list, got %r' % value)  # pragma: no cover
-        return value
-
-    @cached_property
-    def produces(self):
-        value = self._get_overridable('produces', [])
-        if not isinstance(value, (list, tuple)):
-            raise TypeError('`produces` must be a list, got %r' % value)  # pragma: no cover
-        return value

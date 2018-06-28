@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 def get_swagger_json(request, router):
-    return JsonResponse(router.api)
+    return JsonResponse(router.api.doc)
 
 
 def render_docs(request, router, json_url_name):
