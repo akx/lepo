@@ -2,25 +2,41 @@
 
 # Welcome!
 
-Lepo is a *contract-first* API framework that enables you to design your API using the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) (formerly known as Swagger) and implement it in Python 3 and [Django](https://www.djangoproject.com/).
+Lepo is a *contract-first* API framework that enables you to design your API
+using the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) (formerly known as Swagger)
+and implement it in Python 3 and [Django](https://www.djangoproject.com/).
 
 What does it mean when we say *contract-first*? Contrast this to *code-first*:
 
-* **Code-first**: First write the implementation of your API endpoints. Interactive API documentation is generated from docstrings and other meta-data embedded in the implementation. The [Django REST Framework](http://www.django-rest-framework.org/) is a popular example of a framework that promotes code-first style.
-* **Contract-first** (or **API first**): Write the *contract* of your API first in machine-readable documentation describing the available endpoints and their input and output. API calls are mapped into view functions using meta-data embedded in this machine-readable documentation. Other examples of contract-first frameworks include [connexion](https://github.com/zalando/connexion) (using [Flask](https://github.com/pallets/flask)) and [Apigee 127](https://github.com/apigee-127/swagger-tools) (using Node.js and Express).
+* **Code-first**:
+  First write the implementation of your API endpoints.
+  Interactive API documentation is generated from docstrings and other
+  meta-data embedded in the implementation.
+  The [Django REST Framework](http://www.django-rest-framework.org/) is a
+  popular example of a framework that promotes code-first style.
+  
+* **Contract-first** (or **API first**):
+  Write the *contract* of your API first in machine-readable documentation describing
+  the available endpoints and their input and output.
+  API calls are mapped into view functions using meta-data embedded in this machine-readable documentation.
+  Other examples of contract-first frameworks include [connexion](https://github.com/zalando/connexion)
+  (using [Flask](https://github.com/pallets/flask)) and
+  [Apigee 127](https://github.com/apigee-127/swagger-tools) (using Node.js and Express).
 
 ## Features
 
 * Automatic routing of requests to endpoints
 * Body and query parameter validation
 * Output validation
-* Embedded Swagger UI
+* Embedded Swagger UI (for Swagger 2)
+* Support for both Swagger 2 and OpenAPI 3
 
 ## License
 
     The MIT License (MIT)
 
     Copyright (c) 2017 Aarni Koskela, Santtu Pajukanta
+    Copyright (c) 2018 Aarni Koskela
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
