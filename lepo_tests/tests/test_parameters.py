@@ -8,8 +8,8 @@ from lepo.api_info import APIInfo
 from lepo.apidef.doc import Swagger2APIDefinition
 from lepo.apidef.parameter.openapi import OpenAPI3BodyParameter
 from lepo.excs import ErroneousParameters, MissingParameter
-from lepo.parameter_utils import cast_parameter_value, read_parameters
-from lepo_tests.tests.utils import DOC_VERSIONS, get_router
+from lepo.parameter_utils import read_parameters
+from lepo_tests.tests.utils import DOC_VERSIONS, get_router, cast_parameter_value
 
 routers = pytest.mark.parametrize('router', [
     get_router('{}/parameter-test.yaml'.format(doc_version))
@@ -19,7 +19,7 @@ routers = pytest.mark.parametrize('router', [
 
 
 def test_parameter_validation():
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as ei:
         cast_parameter_value(
             Swagger2APIDefinition({}),
             {
@@ -32,6 +32,7 @@ def test_parameter_validation():
             },
             'what it do',
         )
+    assert "'what' is too long" in str(ei.value)
 
 
 @routers

@@ -4,7 +4,8 @@ import pytest
 from iso8601 import UTC
 
 from lepo.apidef.doc import Swagger2APIDefinition
-from lepo.parameter_utils import cast_parameter_value, cast_primitive_value
+from lepo.parameter_utils import cast_primitive_value
+from lepo_tests.tests.utils import cast_parameter_value
 
 DATA_EXAMPLES = [
     {'spec': {'type': 'integer'}, 'input': '5041211', 'output': 5041211},

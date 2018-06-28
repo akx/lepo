@@ -7,19 +7,6 @@ from django.utils.encoding import force_bytes, force_text
 from lepo.excs import ErroneousParameters, MissingParameter
 
 
-def cast_parameter_value(apidoc, parameter, value):
-    if isinstance(parameter, dict):
-        if apidoc:
-            parameter_class = apidoc.operation_class.parameter_class
-        else:
-            raise NotImplementedError(
-                'Must have an APIDoc context when passing a plain dict in to cast_parameter_value'
-            )
-
-        parameter = parameter_class(parameter)
-    return parameter.cast(apidoc, value)
-
-
 def cast_primitive_value(type, format, value):
     if type == 'boolean':
         return (force_text(value).lower() in ('1', 'yes', 'true'))

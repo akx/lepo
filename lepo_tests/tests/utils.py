@@ -20,3 +20,10 @@ def get_data_from_response(response, status=200):
 
 DOC_VERSIONS = ['swagger2', 'openapi3']
 doc_versions = pytest.mark.parametrize('doc_version', DOC_VERSIONS)
+
+
+def cast_parameter_value(apidoc, parameter, value):
+    if isinstance(parameter, dict):
+        parameter_class = apidoc.operation_class.parameter_class
+        parameter = parameter_class(parameter)
+    return parameter.cast(apidoc, value)
