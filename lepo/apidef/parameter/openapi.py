@@ -86,7 +86,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         explode = (explicit_explode if explicit_explode is not None else default_explode)
         return (style, explode)
 
-    def get_value(self, request, view_kwargs):
+    def get_value(self, request, view_kwargs):  # noqa: C901
         if self.location == 'body':  # pragma: no cover
             raise NotImplementedError('Should never get here, this is covered by OpenAPI3BodyParameter')
 
@@ -128,7 +128,6 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
                 raise NotImplementedError('...')  # TODO: Implement me
         else:
             return super().get_value(request, view_kwargs)
-
 
         if type in ('array', 'object'):
             if not splitter:

@@ -39,7 +39,7 @@ def cast_primitive_value(type, format, value):
     return value
 
 
-def read_parameters(request, view_kwargs=None, capture_errors=False):
+def read_parameters(request, view_kwargs=None, capture_errors=False):  # noqa: C901
     """
     :param request: HttpRequest with attached api_info
     :type request: HttpRequest
