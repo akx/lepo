@@ -2,12 +2,12 @@ from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
-from lepo.apidef.parameter import Parameter, Swagger2Parameter
+from lepo.apidef.parameter.swagger import Swagger2Parameter
 from lepo.utils import maybe_resolve
 
 
 class Operation:
-    parameter_class = Parameter
+    parameter_class = None  # This should never be used
 
     def __init__(self, api, path, method, data):
         """

@@ -8,8 +8,14 @@ from lepo.excs import ErroneousParameters, MissingParameter
 
 def cast_parameter_value(apidoc, parameter, value):
     if isinstance(parameter, dict):
-        from lepo.apidef.parameter import BaseParameter
-        parameter = BaseParameter(parameter)
+        if apidoc:
+            parameter_class = apidoc.operation_class.parameter_class
+        else:
+            raise NotImplementedError(
+                'Must have an APIDoc context when passing a plain dict in to cast_parameter_value'
+            )
+
+        parameter = parameter_class(parameter)
     return parameter.cast(apidoc, value)
 
 

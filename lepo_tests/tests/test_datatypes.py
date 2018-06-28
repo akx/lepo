@@ -3,6 +3,7 @@ from datetime import date, datetime
 import pytest
 from iso8601 import UTC
 
+from lepo.apidef.doc import Swagger2APIDefinition
 from lepo.parameter_utils import cast_parameter_value, cast_primitive_value
 
 DATA_EXAMPLES = [
@@ -36,18 +37,19 @@ def test_data(case):
 
 
 def test_collection_formats():
+    apidoc = Swagger2APIDefinition({})
     assert cast_parameter_value(
-        None,
+        apidoc,
         {'type': 'array', 'collectionFormat': 'tsv', 'items': {'type': 'boolean'}},
         'true\ttrue\tfalse',
     ) == [True, True, False]
     assert cast_parameter_value(
-        None,
+        apidoc,
         {'type': 'array', 'collectionFormat': 'ssv', 'items': {'type': 'string'}},
         'what it do',
     ) == ['what', 'it', 'do']
     assert cast_parameter_value(
-        None,
+        apidoc,
         {
             'type': 'array',
             'collectionFormat': 'pipes',
