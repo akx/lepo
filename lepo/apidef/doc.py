@@ -90,6 +90,11 @@ class APIDefinition:
             return OpenAPI3APIDefinition(data)
         raise NotImplementedError('We can never get here.')  # pragma: no cover
 
+    @classmethod
+    def from_yaml(cls, yaml_string):
+        from yaml import safe_load
+        return cls.from_data(safe_load(yaml_string))
+
 
 class Swagger2APIDefinition(APIDefinition):
     version = SWAGGER_2
