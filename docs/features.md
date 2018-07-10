@@ -46,8 +46,9 @@ This list was built by manually scanning down the OpenAPI specification, so omis
 | Parameters: CSV/SSV/TSV/Pipes collection formats | Yes | Yes |
 | Parameters: multi collection format | Yes | - |
 | Parameters: `label` style path components | - | Yes |
-| Parameters: `matrix` style path components | - | Planned |
+| Parameters: `matrix` style path components | - | Unlikely |
 | Parameters: `deepObject` style | - | No |
+| Parameters: Complex parameters | - | Yes |
 | Parameters: list parameters becoming objects | - | Maybe |
 | Parameters: defaults | Yes | Yes |
 | Parameters: extended validation (`maximum`/...) | Yes | Yes |
