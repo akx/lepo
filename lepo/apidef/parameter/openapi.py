@@ -3,7 +3,7 @@ from collections import namedtuple, OrderedDict
 from django.utils.functional import cached_property
 
 from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
-from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, validate_schema
+from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, validate_schema, dot_split
 from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import get_content_type_specificity, match_content_type, maybe_resolve
@@ -123,7 +123,8 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
             if style == 'simple':
                 pass
             elif style == 'label':
-                raise NotImplementedError('...')  # TODO: Implement me
+                value = value.lstrip('.')
+                splitter = (dot_split if explode else comma_split)
             elif style == 'matrix':
                 raise NotImplementedError('...')  # TODO: Implement me
         else:

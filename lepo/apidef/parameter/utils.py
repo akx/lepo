@@ -13,6 +13,10 @@ def comma_split(value):
     return force_text(value).split(',')
 
 
+def dot_split(value):
+    return force_text(value).split('.')
+
+
 def space_split(value):
     return force_text(value).split(' ')
 
