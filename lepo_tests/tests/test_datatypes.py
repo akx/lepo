@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import date, datetime
 
 import pytest
@@ -5,7 +6,7 @@ from iso8601 import UTC
 
 from lepo.apidef.doc import Swagger2APIDefinition
 from lepo.parameter_utils import cast_primitive_value
-from lepo_tests.tests.utils import cast_parameter_value
+from lepo_tests.tests.utils import cast_parameter_value, doc_versions, get_apidoc_from_version
 
 DATA_EXAMPLES = [
     {'spec': {'type': 'integer'}, 'input': '5041211', 'output': 5041211},
@@ -37,20 +38,22 @@ def test_data(case):
     assert parsed == case['output']
 
 
-def test_collection_formats():
-    apidoc = Swagger2APIDefinition({})
-    assert cast_parameter_value(
-        apidoc,
+Case = namedtuple('Case', 'swagger2_schema openapi3_schema input expected')
+
+collection_format_cases = [
+    Case(
         {'type': 'array', 'collectionFormat': 'tsv', 'items': {'type': 'boolean'}},
+        None,  # TSV does not exist in OpenAPI 3
         'true\ttrue\tfalse',
-    ) == [True, True, False]
-    assert cast_parameter_value(
-        apidoc,
+        [True, True, False],
+    ),
+    Case(
         {'type': 'array', 'collectionFormat': 'ssv', 'items': {'type': 'string'}},
+        None,
         'what it do',
-    ) == ['what', 'it', 'do']
-    assert cast_parameter_value(
-        apidoc,
+        ['what', 'it', 'do'],
+    ),
+    Case(
         {
             'type': 'array',
             'collectionFormat': 'pipes',
@@ -59,6 +62,20 @@ def test_collection_formats():
                 'items': {
                     'type': 'integer',
                 },
-            }},
+            }
+        },
+        None,
         '1,2,3|4,5,6|7,8,9',
-    ) == [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+    ),
+]
+
+
+@doc_versions
+@pytest.mark.parametrize('case', collection_format_cases)
+def test_collection_formats(doc_version, case):
+    schema = (case.swagger2_schema if doc_version == 'swagger2' else case.openapi3_schema)
+    if schema is None:
+        pytest.xfail('{}: no schema for {}'.format(case, doc_version))
+    apidoc = get_apidoc_from_version(doc_version)
+    assert cast_parameter_value(apidoc, schema, case.input) == case.expected
