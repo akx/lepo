@@ -22,6 +22,7 @@ def get_urlpatterns(handler_module, definition_file='swagger2/petstore-expanded.
     router_urls = router.get_urls(
         decorate=(csrf_exempt,),
         optional_trailing_slash=True,
+        root_view_name='api_root',
     )
 
     urlpatterns = [
