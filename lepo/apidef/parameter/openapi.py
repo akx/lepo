@@ -117,7 +117,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
             type = None
             complex = True
 
-        if style == 'deepObject':
+        if style == 'deepObject':  # pragma: no cover
             raise NotImplementedError('deepObjects are not supported at present. PRs welcome.')
 
         if self.location == 'query':
@@ -154,9 +154,9 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
             elif style == 'label':
                 value = value.lstrip('.')
                 splitter = (dot_split if explode else comma_split)
-            elif style == 'matrix':
+            elif style == 'matrix':  # pragma: no cover
                 raise NotImplementedError('...')  # TODO: Implement me
-        else:
+        else:  # pragma: no cover
             return super().get_value(request, view_kwargs)
 
         if complex:

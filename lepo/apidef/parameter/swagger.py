@@ -121,7 +121,7 @@ class Swagger2Parameter(Swagger2BaseParameter, BaseTopParameter):
             else:
                 return source[self.name]
 
-        return super().get_value(request, view_kwargs)
+        return super().get_value(request, view_kwargs)  # pragma: no cover
 
     def read_body(self, request):
         consumes = request.api_info.operation.consumes
