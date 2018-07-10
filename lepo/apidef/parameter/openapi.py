@@ -165,23 +165,18 @@ class OpenAPI3BodyParameter(OpenAPI3Parameter):
         return 'body'
 
     @cached_property
-    def content_type_mapping(self):
-        selector_to_param = [
-            (selector, OpenAPI3BaseParameter(content_description, api=self.api))
-            for (selector, content_description)
-            in self.data['content'].items()
-        ]
-        return OrderedDict(sorted(selector_to_param, key=lambda kv: get_content_type_specificity(kv[0])))
+    def media_map(self):
+        return OpenAPI3MediaMap(api=self.api, mapping_data=self.data['content'])
 
     def get_value(self, request, view_kwargs):
-        content_type_map = self.content_type_mapping
-        content_type_name = match_content_type(request.content_type, content_type_map)
+        media_map = self.media_map
+        content_type_name = media_map.match(request.content_type)
         if not content_type_name:
             raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
                 request.content_type,
-                content_type_map.keys(),
+                media_map.keys(),
             ))
-        parameter = content_type_map[content_type_name]
+        parameter = media_map[content_type_name]
         value = read_body(request, parameter=parameter)
         return WrappedValue(parameter, value)
 
@@ -190,3 +185,20 @@ class OpenAPI3BodyParameter(OpenAPI3Parameter):
             raise TypeError('Expected a wrappedvalue :(')
         parameter, value = value
         return parameter.cast(api, value)
+
+
+class OpenAPI3MediaMap(OrderedDict):
+    def __init__(self, api, mapping_data):
+        self.api = api
+        self.mapping_data = mapping_data
+        selector_to_param = [
+            (selector, OpenAPI3BaseParameter(content_description, api=self.api))
+            for (selector, content_description)
+            in self.mapping_data.items()
+        ]
+        super().__init__(
+            sorted(selector_to_param, key=lambda kv: get_content_type_specificity(kv[0]))
+        )
+
+    def match(self, content_type):
+        return match_content_type(content_type, self)
