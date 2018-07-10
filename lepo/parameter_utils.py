@@ -4,6 +4,7 @@ import iso8601
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import force_bytes, force_text
 
+from lepo.apidef.parameter.base import NO_VALUE
 from lepo.excs import ErroneousParameters, MissingParameter
 
 
@@ -42,14 +43,12 @@ def read_parameters(request, view_kwargs=None, capture_errors=False):  # noqa: C
     for param in request.api_info.operation.parameters:
         try:
             value = param.get_value(request, view_kwargs)
-        except KeyError:
-            if param.has_default:
-                params[param.name] = param.default
-                continue
-            if param.required:  # Required but missing
-                errors[param.name] = MissingParameter('parameter %s is required but missing' % param.name)
-            continue
-        try:
+            if value is NO_VALUE:
+                if param.has_default:
+                    params[param.name] = param.default
+                elif param.required:  # Required but missing
+                    errors[param.name] = MissingParameter('parameter %s is required but missing' % param.name)
+                continue  # No value, or a default was added, or an error was added.
             params[param.name] = param.cast(request.api_info.api, value)
         except (NotImplementedError, ImproperlyConfigured):
             raise

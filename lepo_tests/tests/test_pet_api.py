@@ -4,7 +4,7 @@ import django.conf
 import pytest
 from django.utils.crypto import get_random_string
 
-from lepo.excs import InvalidBodyContent, InvalidBodyFormat
+from lepo.excs import InvalidBodyContent, InvalidBodyFormat, ErroneousParameters
 from lepo_tests.models import Pet
 from lepo_tests.tests.utils import get_data_from_response
 from lepo_tests.utils import urlconf_map
@@ -125,19 +125,21 @@ def test_invalid_operation(client, api_urls):
 
 @pytest.mark.django_db
 def test_invalid_body_format(client, api_urls):
-    with pytest.raises(InvalidBodyFormat):
+    with pytest.raises(ErroneousParameters) as ei:
         client.post(
             '/api/pets',
             b'<pet></pet>',
             content_type='application/xml'
         )
+    assert isinstance(ei.value.errors['pet'], InvalidBodyFormat)
 
 
 @pytest.mark.django_db
 def test_invalid_body_content(client, api_urls):
-    with pytest.raises(InvalidBodyContent):
+    with pytest.raises(ErroneousParameters) as ei:
         client.post(
             '/api/pets',
             b'{',
             content_type='application/json'
         )
+    assert isinstance(ei.value.errors['pet'], InvalidBodyContent)

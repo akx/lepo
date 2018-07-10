@@ -2,7 +2,7 @@ from collections import namedtuple, OrderedDict
 
 from django.utils.functional import cached_property
 
-from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
+from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter, NO_VALUE
 from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, validate_schema, dot_split
 from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition
 from lepo.parameter_utils import cast_primitive_value
@@ -99,10 +99,9 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
 
         if self.location == 'query':
             if type == 'array' and style == 'form' and explode:
-                value = request.GET.getlist(self.name)
-                if value is None:
-                    raise KeyError(self.name)
-                return value
+                return request.GET.getlist(self.name, NO_VALUE)
+            if self.name not in request.GET:
+                return NO_VALUE
             value = request.GET[self.name]
             splitter = {
                 'form': comma_split,
@@ -113,12 +112,19 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         elif self.location == 'header':
             if style != 'simple':  # pragma: no cover
                 raise InvalidParameterDefinition('Header parameters always use the simple style, says the spec')
-            value = request.META['HTTP_%s' % self.name.upper().replace('-', '_')]
+            meta_key = 'HTTP_%s' % self.name.upper().replace('-', '_')
+            if meta_key not in request.META:
+                return NO_VALUE
+            value = request.META[meta_key]
         elif self.location == 'cookie':
             if style != 'form':  # pragma: no cover
                 raise InvalidParameterDefinition('Cookie parameters always use the form style, says the spec')
-            value = request.COOKIES.get(self.name)
+            if self.name not in request.COOKIES:
+                return NO_VALUE
+            value = request.COOKIES[self.name]
         elif self.location == 'path':
+            if self.name not in view_kwargs:
+                return NO_VALUE
             value = view_kwargs[self.name]
             if style == 'simple':
                 pass
