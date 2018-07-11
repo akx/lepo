@@ -35,6 +35,6 @@ pytest-django==3.3.2
 pytest-forked==0.2        # via pytest-xdist
 pytest-xdist==1.22.2
 pytest==3.6.2
-pyyaml==4.1
+pyyaml>=3.13
 six==1.11.0               # via livereload, more-itertools, pip-tools, pytest
 tornado==4.5.3            # via livereload, mkdocs, mkdocs-material
