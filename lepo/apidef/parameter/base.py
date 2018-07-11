@@ -1,6 +1,9 @@
 from lepo.excs import InvalidParameterDefinition
 
 
+NO_VALUE = object()
+
+
 class BaseParameter:
     def __init__(self, data, api=None):
         self.data = data

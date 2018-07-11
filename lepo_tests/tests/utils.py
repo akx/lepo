@@ -2,7 +2,10 @@ import json
 import os
 
 import pytest
+from django.test import RequestFactory
 
+from lepo.api_info import APIInfo
+from lepo.apidef.doc import Swagger2APIDefinition, OpenAPI3APIDefinition
 from lepo.router import Router
 
 TESTS_DIR = os.path.dirname(__file__)
@@ -27,3 +30,18 @@ def cast_parameter_value(apidoc, parameter, value):
         parameter_class = apidoc.operation_class.parameter_class
         parameter = parameter_class(parameter)
     return parameter.cast(apidoc, value)
+
+
+def get_apidoc_from_version(version, content={}):
+    if version == 'swagger2':
+        return Swagger2APIDefinition(content)
+    elif version == 'openapi3':
+        return OpenAPI3APIDefinition(content)
+    else:  # pragma: no cover
+        raise NotImplementedError('...')
+
+
+def make_request_for_operation(operation, method='GET', query_string=''):
+    request = RequestFactory().generic(method=method, path=operation.path.path, QUERY_STRING=query_string)
+    request.api_info = APIInfo(operation)
+    return request

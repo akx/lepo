@@ -27,6 +27,12 @@ class InvalidBodyContent(ValueError):
     pass
 
 
+class InvalidComplexContent(ValueError):
+    def __init__(self, message, error_map):
+        super(InvalidComplexContent, self).__init__(message)
+        self.errors = error_map
+
+
 class InvalidParameterDefinition(ImproperlyConfigured):
     pass
 

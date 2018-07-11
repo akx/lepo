@@ -1,12 +1,19 @@
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
-from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter
-from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, validate_schema
-from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition
+from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter, NO_VALUE
+from lepo.apidef.parameter.utils import comma_split, dot_split, pipe_split, read_body, space_split, validate_schema
+from lepo.decoders import get_decoder
+from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition, InvalidComplexContent
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import get_content_type_specificity, match_content_type, maybe_resolve
+
+
+class WrappedValue:
+    def __init__(self, value, parameter):
+        self.value = value
+        self.parameter = parameter
 
 
 class OpenAPI3Schema:
@@ -47,12 +54,16 @@ class OpenAPI3BaseParameter(BaseParameter):
         return OpenAPI3Schema(schema)
 
     @property
+    def has_schema(self):
+        return ('schema' in self.data)
+
+    @property
     def type(self):
         return self.schema.type
 
     @property
     def has_default(self):
-        return self.schema.has_default
+        return (self.has_schema and self.schema.has_default)
 
     @property
     def default(self):
@@ -78,6 +89,10 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         'cookie': ('form', True),
     }
 
+    @cached_property
+    def media_map(self):
+        return OpenAPI3MediaMap(api=self.api, mapping_data=self.data['content'])
+
     def get_style_and_explode(self):
         explicit_style = self.data.get('style')
         explicit_explode = self.data.get('explode')
@@ -90,19 +105,26 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         if self.location == 'body':  # pragma: no cover
             raise NotImplementedError('Should never get here, this is covered by OpenAPI3BodyParameter')
 
-        (style, explode) = self.get_style_and_explode()
-        type = self.schema.type
-        splitter = comma_split
+        if self.has_schema:
+            (style, explode) = self.get_style_and_explode()
+            type = self.schema.type
+            splitter = comma_split
+            complex = False
+        else:  # Complex object...
+            style = 'simple'
+            splitter = None
+            explode = False
+            type = None
+            complex = True
 
-        if style == 'deepObject':
+        if style == 'deepObject':  # pragma: no cover
             raise NotImplementedError('deepObjects are not supported at present. PRs welcome.')
 
         if self.location == 'query':
             if type == 'array' and style == 'form' and explode:
-                value = request.GET.getlist(self.name)
-                if value is None:
-                    raise KeyError(self.name)
-                return value
+                return request.GET.getlist(self.name, NO_VALUE)
+            if self.name not in request.GET:
+                return NO_VALUE
             value = request.GET[self.name]
             splitter = {
                 'form': comma_split,
@@ -113,21 +135,35 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         elif self.location == 'header':
             if style != 'simple':  # pragma: no cover
                 raise InvalidParameterDefinition('Header parameters always use the simple style, says the spec')
-            value = request.META['HTTP_%s' % self.name.upper().replace('-', '_')]
+            meta_key = 'HTTP_%s' % self.name.upper().replace('-', '_')
+            if meta_key not in request.META:
+                return NO_VALUE
+            value = request.META[meta_key]
         elif self.location == 'cookie':
             if style != 'form':  # pragma: no cover
                 raise InvalidParameterDefinition('Cookie parameters always use the form style, says the spec')
-            value = request.COOKIES.get(self.name)
+            if self.name not in request.COOKIES:
+                return NO_VALUE
+            value = request.COOKIES[self.name]
         elif self.location == 'path':
+            if self.name not in view_kwargs:
+                return NO_VALUE
             value = view_kwargs[self.name]
             if style == 'simple':
                 pass
             elif style == 'label':
+                value = value.lstrip('.')
+                splitter = (dot_split if explode else comma_split)
+            elif style == 'matrix':  # pragma: no cover
                 raise NotImplementedError('...')  # TODO: Implement me
-            elif style == 'matrix':
-                raise NotImplementedError('...')  # TODO: Implement me
-        else:
+        else:  # pragma: no cover
             return super().get_value(request, view_kwargs)
+
+        if complex:
+            # We've gotten the raw value from wherever it was stored,
+            # so let's do content negotiation (guessing in this case)
+            # and hopefully return a value we can cast and validate.
+            return self._parse_complex(value)
 
         if type in ('array', 'object'):
             if not splitter:
@@ -142,8 +178,31 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
 
         return value
 
+    def _parse_complex(self, value):
+        errors = {}
+        for content_type, param_obj in self.media_map.items():
+            decoder = get_decoder(content_type)
+            if decoder:
+                try:
+                    # This is spectacularly ugly, but we don't really have any other way
+                    # of passing the new parameter type up, for the `.cast()` call...
+                    return WrappedValue(value=decoder(value), parameter=param_obj)
+                except Exception as exc:
+                    errors[content_type] = exc
+        raise InvalidComplexContent(
+            'No decoder could handle the value {!r}: {}'.format(value, errors),
+            errors,
+        )
 
-WrappedValue = namedtuple('WrappedValue', ('parameter', 'value'))
+    def cast(self, api, value):
+        if isinstance(value, WrappedValue):
+            # In case of bodies or complex parameters, the parameter type
+            # might have been "negotiated" within `get_value`, so unpeel.
+            value, parameter = value.value, value.parameter
+        else:
+            parameter = super()
+
+        return parameter.cast(api, value)
 
 
 class OpenAPI3BodyParameter(OpenAPI3Parameter):
@@ -157,29 +216,31 @@ class OpenAPI3BodyParameter(OpenAPI3Parameter):
     def location(self):
         return 'body'
 
-    @cached_property
-    def content_type_mapping(self):
-        selector_to_param = [
-            (selector, OpenAPI3BaseParameter(content_description, api=self.api))
-            for (selector, content_description)
-            in self.data['content'].items()
-        ]
-        return OrderedDict(sorted(selector_to_param, key=lambda kv: get_content_type_specificity(kv[0])))
-
     def get_value(self, request, view_kwargs):
-        content_type_map = self.content_type_mapping
-        content_type_name = match_content_type(request.content_type, content_type_map)
+        media_map = self.media_map
+        content_type_name = media_map.match(request.content_type)
         if not content_type_name:
             raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
                 request.content_type,
-                content_type_map.keys(),
+                media_map.keys(),
             ))
-        parameter = content_type_map[content_type_name]
+        parameter = media_map[content_type_name]
         value = read_body(request, parameter=parameter)
-        return WrappedValue(parameter, value)
+        return WrappedValue(parameter=parameter, value=value)
 
-    def cast(self, api, value):
-        if not isinstance(value, WrappedValue):  # pragma: no cover
-            raise TypeError('Expected a wrappedvalue :(')
-        parameter, value = value
-        return parameter.cast(api, value)
+
+class OpenAPI3MediaMap(OrderedDict):
+    def __init__(self, api, mapping_data):
+        self.api = api
+        self.mapping_data = mapping_data
+        selector_to_param = [
+            (selector, OpenAPI3BaseParameter(content_description, api=self.api))
+            for (selector, content_description)
+            in self.mapping_data.items()
+        ]
+        super().__init__(
+            sorted(selector_to_param, key=lambda kv: get_content_type_specificity(kv[0]))
+        )
+
+    def match(self, content_type):
+        return match_content_type(content_type, self)

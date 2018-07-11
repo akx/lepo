@@ -19,13 +19,10 @@ class OpenAPI3Operation(Operation):
                 body_parameter.name = self.data.get('x-lepo-body-name', body_parameter.name)
                 return body_parameter
 
-    def get_body_parameter_name_override(self):
-        return
-
     def get_parameter_dict(self):
         parameter_dict = super().get_parameter_dict()
         for parameter in parameter_dict.values():
-            if parameter.in_body:
+            if parameter.in_body:  # pragma: no cover
                 raise ValueError('Regular parameter declared to be in body while parsing OpenAPI 3')
         body_parameter = self._get_body_parameter()
         if body_parameter:
