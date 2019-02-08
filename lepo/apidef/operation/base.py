@@ -41,6 +41,11 @@ class Operation:
         """
         return list(self.get_parameter_dict().values())
 
+    @cached_property
+    def responses(self):
+        # TODO: resolve refs, etc.
+        return self.data.get('responses', {}).copy()
+
     def get_parameter_dict(self):
         parameters = OrderedDict()
         for parameter in self._get_regular_parameters():
