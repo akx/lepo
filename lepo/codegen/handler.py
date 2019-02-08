@@ -1,11 +1,6 @@
-import argparse
-import sys
+from io import StringIO
 
 from django.utils.text import camel_case_to_spaces
-from six import StringIO
-
-from lepo.apidef.doc import APIDefinition
-from lepo.router import Router
 
 HANDLER_TEMPLATE = '''
 def {func_name}(request, {parameters}):
@@ -30,18 +25,3 @@ def generate_handler_stub(router, handler_template=HANDLER_TEMPLATE):
         output.write(handler)
         output.write('\n\n\n')
     return output.getvalue()
-
-
-def cmdline(args=None):  # pragma: no cover
-    ap = argparse.ArgumentParser()
-    ap.add_argument('input', default=None, nargs='?')
-    args = ap.parse_args(args)
-    if args.input:
-        apidoc = APIDefinition.from_file(args.input)
-    else:  # pragma: no cover
-        apidoc = APIDefinition.from_yaml(sys.stdin)
-    print(generate_handler_stub(Router(apidoc)))
-
-
-if __name__ == '__main__':  # pragma: no cover
-    cmdline()
