@@ -36,7 +36,7 @@ What does it mean when we say *contract-first*? Contrast this to *code-first*:
     The MIT License (MIT)
 
     Copyright (c) 2017 Aarni Koskela, Santtu Pajukanta
-    Copyright (c) 2018 Aarni Koskela
+    Copyright (c) 2018, 2020 Aarni Koskela
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
