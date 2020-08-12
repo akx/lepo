@@ -19,18 +19,18 @@ def find_pets(request, limit=None, tags=()):
             Q()
         )
         pets = pets.filter(tags_q)
-    return PetSchema().dump(pets, many=True).data
+    return PetSchema().dump(pets, many=True)
 
 
 def add_pet(request, pet):
-    pet_data = PetSchema().load(pet).data
+    pet_data = PetSchema().load(pet)
     pet = Pet(**pet_data)
     pet.save()
-    return PetSchema().dump(pet).data
+    return PetSchema().dump(pet)
 
 
 def find_pet_by_id(request, id):
-    return PetSchema().dump(Pet.objects.get(id=id)).data
+    return PetSchema().dump(Pet.objects.get(id=id))
 
 
 def delete_pet(request, id):
@@ -39,7 +39,7 @@ def delete_pet(request, id):
 
 def update_pet(request, id, pet):
     old_pet = Pet.objects.get(id=id)
-    for key, value in PetSchema().load(pet).data.items():
+    for key, value in PetSchema().load(pet).items():
         setattr(old_pet, key, value)
     old_pet.save()
-    return PetSchema().dump(old_pet).data
+    return PetSchema().dump(old_pet)

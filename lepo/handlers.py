@@ -82,13 +82,13 @@ class ModelHandlerReadMixin(BaseModelHandler):
         queryset = self.get_queryset('list')
         object_list = self.process_object_list('list', queryset)
         schema = self.get_schema('list')
-        return schema.dump(object_list, many=True).data
+        return schema.dump(object_list, many=True)
 
     def handle_retrieve(self):
         self.call_processors('retrieve')
         object = self.retrieve_object()
         schema = self.get_schema('retrieve')
-        return schema.dump(object).data
+        return schema.dump(object)
 
 
 class ModelHandlerCreateMixin(BaseModelHandler):
@@ -97,9 +97,7 @@ class ModelHandlerCreateMixin(BaseModelHandler):
     def handle_create(self):
         self.call_processors('create')
         schema = self.get_schema('create')
-        result = schema.load(self.args[self.create_data_name])
-        assert not result.errors
-        data = result.data
+        data = schema.load(self.args[self.create_data_name])
         if not isinstance(data, self.model):
             data = self.model(**data)
 
@@ -107,7 +105,7 @@ class ModelHandlerCreateMixin(BaseModelHandler):
         data.save()
 
         schema = self.get_schema('post_create', object=data)
-        return schema.dump(data).data
+        return schema.dump(data)
 
 
 class ModelHandlerUpdateMixin(BaseModelHandler):
@@ -117,15 +115,14 @@ class ModelHandlerUpdateMixin(BaseModelHandler):
         self.call_processors('update')
         object = self.retrieve_object()
         schema = self.get_schema('update', object=object)
-        result = schema.load(self.args[self.update_data_name])
-        assert not result.errors
-        for key, value in result.data.items():
+        data = schema.load(self.args[self.update_data_name])
+        for key, value in data.items():
             setattr(object, key, value)
         object.full_clean()
         object.save()
         self.call_processors('post_update', object=object)
         schema = self.get_schema('post_update', object=object)
-        return schema.dump(object).data
+        return schema.dump(object)
 
 
 class ModelHandlerDeleteMixin(BaseModelHandler):
