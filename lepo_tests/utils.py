@@ -2,7 +2,7 @@ import os
 import sys
 import types
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.contrib import admin
 
 from lepo.decorators import csrf_exempt
@@ -26,9 +26,9 @@ def get_urlpatterns(handler_module, definition_file='swagger2/petstore-expanded.
     )
 
     urlpatterns = [
-        url(r'^admin/', admin.site.urls),
-        url(r'^api/', include((router_urls, 'api'), 'api')),
-        url(r'^api/', include((get_docs_urls(router, 'api-docs'), 'api-docs'), 'api-docs')),
+        re_path(r'^admin/', admin.site.urls),
+        re_path(r'^api/', include((router_urls, 'api'), 'api')),
+        re_path(r'^api/', include((get_docs_urls(router, 'api-docs'), 'api-docs'), 'api-docs')),
     ]
     return urlpatterns
 
