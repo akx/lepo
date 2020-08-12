@@ -1,4 +1,7 @@
-from collections import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from functools import reduce
 from importlib import import_module
 from inspect import isfunction, ismethod
