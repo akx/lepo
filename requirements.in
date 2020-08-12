@@ -1,3 +1,4 @@
+Django>=2.2
 iso8601
-jsonschema
-marshmallow
+jsonschema~=3.2
+marshmallow~=3.0
