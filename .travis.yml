@@ -1,15 +1,15 @@
+dist: xenial
 sudo: false
 cache:
   directories:
     - $HOME/.cache/pip
 language: python
 python:
-#  - "3.4"
-  - "3.5"
-#  - "3.6"
+  - "3.6"
+  - "3.7"
 env:
-  - DJANGO=django~=1.11.0
-  - DJANGO=django~=2.0
+  - DJANGO=django~=2.2
+  - DJANGO=django~=3.0
 install:
   - pip install -r requirements-dev.txt
   - "pip install $DJANGO -e ."

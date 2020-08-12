@@ -1,16 +1,16 @@
 import json
 
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 DEFAULT_ENCODING = 'utf-8'
 
 
 def decode_json(content, encoding=None, **kwargs):
-    return json.loads(force_text(content, encoding=(encoding or DEFAULT_ENCODING)))
+    return json.loads(force_str(content, encoding=(encoding or DEFAULT_ENCODING)))
 
 
 def decode_plain_text(content, encoding=None, **kwargs):
-    return force_text(content, encoding=(encoding or DEFAULT_ENCODING))
+    return force_str(content, encoding=(encoding or DEFAULT_ENCODING))
 
 
 DECODERS = {

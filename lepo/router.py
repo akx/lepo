@@ -1,9 +1,12 @@
-from collections import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from functools import reduce
 from importlib import import_module
 from inspect import isfunction, ismethod
 
-from django.conf.urls import url
+from django.urls import re_path
 from django.http import HttpResponse
 
 from lepo.apidef.doc import APIDefinition
@@ -96,10 +99,10 @@ class Router:
                     regex += '/'
                 regex += '?$'
             view = decorate(path.get_view_class(router=self).as_view())
-            urls.append(url(regex, view, name=name_template.format(name=path.name)))
+            urls.append(re_path(regex, view, name=name_template.format(name=path.name)))
 
         if root_view_name:
-            urls.append(url(r'^$', root_view, name=name_template.format(name=root_view_name)))
+            urls.append(re_path(r'^$', root_view, name=name_template.format(name=root_view_name)))
         return urls
 
     def get_handler(self, operation_id):

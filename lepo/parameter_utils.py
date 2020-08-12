@@ -2,7 +2,7 @@ import base64
 
 import iso8601
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 
 from lepo.apidef.parameter.base import NO_VALUE
 from lepo.excs import ErroneousParameters, MissingParameter
@@ -10,7 +10,7 @@ from lepo.excs import ErroneousParameters, MissingParameter
 
 def cast_primitive_value(type, format, value):
     if type == 'boolean':
-        return (force_text(value).lower() in ('1', 'yes', 'true'))
+        return (force_str(value).lower() in ('1', 'yes', 'true'))
     if type == 'integer' or format in ('integer', 'long'):
         return int(value)
     if type == 'number' or format in ('float', 'double'):
@@ -24,7 +24,7 @@ def cast_primitive_value(type, format, value):
     if format == 'dateTime':  # ISO8601 datetime
         return iso8601.parse_date(value)
     if type == 'string':
-        return force_text(value)
+        return force_str(value)
     return value
 
 

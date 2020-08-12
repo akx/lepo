@@ -1,5 +1,8 @@
 import setuptools
 
+with open('./requirements.in') as f:
+    install_requires = [l for l in f.readlines() if l and not l.startswith('#')]
+
 if __name__ == '__main__':
     setuptools.setup(
         name='lepo',
@@ -10,7 +13,7 @@ if __name__ == '__main__':
         maintainer='Aarni Koskela',
         maintainer_email='akx@iki.fi',
         license='MIT',
-        install_requires=['Django', 'iso8601', 'jsonschema', 'marshmallow'],
+        install_requires=install_requires,
         packages=setuptools.find_packages('.', exclude=(
             'lepo_tests',
             'lepo_tests.*',
