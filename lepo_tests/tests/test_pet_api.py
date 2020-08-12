@@ -60,10 +60,10 @@ def test_optional_trailing_slash(client, api_urls):
 @pytest.mark.parametrize('with_tag', (False, True))
 def test_post_pet(client, api_urls, with_tag):
     payload = {
-        'name': get_random_string(),
+        'name': get_random_string(15),
     }
     if with_tag:
-        payload['tag'] = get_random_string()
+        payload['tag'] = get_random_string(15)
 
     pet = get_data_from_response(
         client.post(
