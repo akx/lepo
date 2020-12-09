@@ -1,0 +1,44 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  Build:
+    runs-on: '${{ matrix.os }}'
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            python-version: '3.6'
+            DJANGO: django~=2.2
+          - os: ubuntu-18.04
+            python-version: '3.6'
+            DJANGO: django~=3.0
+          - os: ubuntu-18.04
+            python-version: '3.7'
+            DJANGO: django~=2.2
+          - os: ubuntu-18.04
+            python-version: '3.7'
+            DJANGO: django~=3.0
+    steps:
+      - name: 'Set up Python ${{ matrix.python-version }}'
+        uses: actions/setup-python@v2
+        with:
+          python-version: '${{ matrix.python-version }}'
+      - uses: actions/checkout@v2
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.cache/pip
+          key: '${{ runner.os }}-${{ hashFiles(''TODO'') }}'
+      - run: pip install -r requirements-dev.txt
+      - run: pip install $DJANGO -e .
+        env:
+          DJANGO: '${{ matrix.DJANGO }}'
+      - run: flake8 lepo
+      - run: py.test -vvv --cov .
+      - run: 'bash <(curl -s https://codecov.io/bash)'
