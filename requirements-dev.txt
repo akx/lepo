@@ -29,7 +29,7 @@ iniconfig==1.0.1
     # via pytest
 isort==5.3.2
     # via -r requirements-dev.in
-jinja2==2.11.2
+jinja2==2.11.3
     # via mkdocs
 joblib==0.16.0
     # via nltk
