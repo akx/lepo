@@ -8,7 +8,7 @@ asgiref==3.2.10
     # via django
 attrs==19.3.0
     # via jsonschema
-django==3.1.6
+django==3.1.8
     # via -r requirements.in
 iso8601==0.1.12
     # via -r requirements.in
