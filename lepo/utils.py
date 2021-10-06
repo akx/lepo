@@ -17,7 +17,7 @@ def maybe_resolve(object, resolve):
 
 
 def snake_case(string):
-    return camel_case_to_spaces(string).replace(' ', '_')
+    return camel_case_to_spaces(string).replace('-', '_').replace(' ', '_').replace('__', '_')
 
 
 def match_content_type(content_type, content_type_mapping):
