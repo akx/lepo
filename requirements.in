@@ -1,4 +1,0 @@
-Django>=3.0
-iso8601
-jsonschema~=3.2
-marshmallow~=3.0
