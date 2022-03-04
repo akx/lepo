@@ -13,17 +13,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-            python-version: '3.6'
-            DJANGO: django~=2.2
-          - os: ubuntu-18.04
-            python-version: '3.6'
-            DJANGO: django~=3.0
-          - os: ubuntu-18.04
-            python-version: '3.7'
-            DJANGO: django~=2.2
-          - os: ubuntu-18.04
             python-version: '3.7'
             DJANGO: django~=3.0
+          - os: ubuntu-20.04
+            python-version: '3.10'
+            DJANGO: django~=4.0
     steps:
       - name: 'Set up Python ${{ matrix.python-version }}'
         uses: actions/setup-python@v2
