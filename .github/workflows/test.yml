@@ -29,7 +29,7 @@ jobs:
         with:
           path: $HOME/.cache/pip
           key: '${{ runner.os }}-${{ hashFiles(''TODO'') }}'
-      - run: pip install -r requirements-dev.txt
+      - run: pip install -r requirements-test.txt
       - run: pip install $DJANGO -e .
         env:
           DJANGO: '${{ matrix.DJANGO }}'
