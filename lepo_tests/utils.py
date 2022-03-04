@@ -2,8 +2,8 @@ import os
 import sys
 import types
 
-from django.urls import include, re_path
 from django.contrib import admin
+from django.urls import include, re_path
 
 from lepo.decorators import csrf_exempt
 from lepo.router import Router

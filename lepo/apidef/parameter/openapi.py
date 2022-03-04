@@ -2,10 +2,21 @@ from collections import OrderedDict
 
 from django.utils.functional import cached_property
 
-from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter, NO_VALUE
-from lepo.apidef.parameter.utils import comma_split, dot_split, pipe_split, read_body, space_split, validate_schema
+from lepo.apidef.parameter.base import NO_VALUE, BaseParameter, BaseTopParameter
+from lepo.apidef.parameter.utils import (
+    comma_split,
+    dot_split,
+    pipe_split,
+    read_body,
+    space_split,
+    validate_schema,
+)
 from lepo.decoders import get_decoder
-from lepo.excs import InvalidBodyFormat, InvalidParameterDefinition, InvalidComplexContent
+from lepo.excs import (
+    InvalidBodyFormat,
+    InvalidComplexContent,
+    InvalidParameterDefinition,
+)
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import get_content_type_specificity, match_content_type, maybe_resolve
 

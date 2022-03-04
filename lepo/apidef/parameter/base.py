@@ -1,6 +1,5 @@
 from lepo.excs import InvalidParameterDefinition
 
-
 NO_VALUE = object()
 
 
