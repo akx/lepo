@@ -23,7 +23,7 @@ class Path:
         self.name = self._build_view_name()
 
     def get_view_class(self, router):
-        return type('%sView' % self.name.title(), (PathView,), {
+        return type(f'{self.name.title()}View', (PathView,), {
             'path': self,
             'router': router,
         })
@@ -36,7 +36,7 @@ class Path:
     def _build_regex(self):
         return re.sub(
             PATH_PLACEHOLDER_REGEX,
-            lambda m: '(?P<%s>[^/]+?)' % m.group(1),
+            lambda m: f'(?P<{m.group(1)}>[^/]+?)',
             self.path,
         ).lstrip('/') + '$'
 

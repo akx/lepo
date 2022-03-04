@@ -41,7 +41,7 @@ class RouterValidationError(Exception):
     def __init__(self, error_map):
         self.errors = error_map
         self.description = '\n'.join(f'{operation.id}: {error}' for (operation, error) in self.flat_errors)
-        super().__init__('Router validation failed:\n%s' % self.description)
+        super().__init__(f'Router validation failed:\n{self.description}')
 
     @property
     def flat_errors(self):

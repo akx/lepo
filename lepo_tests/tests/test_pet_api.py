@@ -79,7 +79,7 @@ def test_post_pet(client, api_urls, with_tag):
 
     # Test we can get the pet from the API now
     assert get_data_from_response(client.get('/api/pets')) == [pet]
-    assert get_data_from_response(client.get('/api/pets/{}'.format(pet['id']))) == pet
+    assert get_data_from_response(client.get(f"/api/pets/{pet['id']}")) == pet
 
 
 @pytest.mark.django_db

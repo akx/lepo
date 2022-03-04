@@ -11,12 +11,12 @@ class Swagger2Operation(Operation):
     def consumes(self):
         value = self._get_overridable('consumes', [])
         if not isinstance(value, (list, tuple)):
-            raise TypeError('`consumes` must be a list, got %r' % value)  # pragma: no cover
+            raise TypeError(f'`consumes` must be a list, got {value!r}')  # pragma: no cover
         return value
 
     @cached_property
     def produces(self):
         value = self._get_overridable('produces', [])
         if not isinstance(value, (list, tuple)):
-            raise TypeError('`produces` must be a list, got %r' % value)  # pragma: no cover
+            raise TypeError(f'`produces` must be a list, got {value!r}')  # pragma: no cover
         return value

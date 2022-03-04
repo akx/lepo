@@ -43,8 +43,8 @@ def read_body(request, parameter=None):
         if decoder:
             return decoder(request.body, encoding=request.content_params.get('charset', 'UTF-8'))
     except Exception as exc:
-        raise InvalidBodyContent('Unable to parse this body as %s' % request.content_type) from exc
-    raise NotImplementedError('No idea how to parse content-type %s' % request.content_type)  # pragma: no cover
+        raise InvalidBodyContent(f'Unable to parse this body as {request.content_type}') from exc
+    raise NotImplementedError(f'No idea how to parse content-type {request.content_type}')  # pragma: no cover
 
 
 class LepoDraft4Validator(Draft4Validator):
@@ -70,10 +70,10 @@ def validate_schema(schema, api, value):
             if 'mapping' in discriminator:
                 actual_type = discriminator['mapping'][type]
             else:
-                actual_type = '#/components/schemas/%s' % type
+                actual_type = f'#/components/schemas/{type}'
         else:
             type = value[discriminator]
-            actual_type = '#/definitions/%s' % type
+            actual_type = f'#/definitions/{type}'
         schema = api.resolve_reference(actual_type)
         jsonschema.validate(
             value,

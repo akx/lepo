@@ -72,7 +72,7 @@ class Swagger2BaseParameter(BaseParameter):
         collection_format = self.collection_format or 'csv'
         splitter = COLLECTION_FORMAT_SPLITTERS.get(collection_format)
         if not splitter:
-            raise NotImplementedError('unsupported collection format in %r' % self)
+            raise NotImplementedError(f'unsupported collection format in {self!r}')
         value = splitter(value)
         return value
 
@@ -101,7 +101,7 @@ class Swagger2Parameter(Swagger2BaseParameter, BaseTopParameter):
             return view_kwargs.get(self.name, NO_VALUE)
 
         if self.location == 'header':
-            meta_key = 'HTTP_%s' % self.name.upper().replace('-', '_')
+            meta_key = f"HTTP_{self.name.upper().replace('-', '_')}"
             return request.META.get(meta_key, NO_VALUE)
 
         if self.location == 'body':
@@ -126,9 +126,6 @@ class Swagger2Parameter(Swagger2BaseParameter, BaseTopParameter):
     def read_body(self, request):
         consumes = request.api_info.operation.consumes
         if request.content_type not in consumes:
-            raise InvalidBodyFormat('Content-type {} is not supported ({!r} are)'.format(
-                request.content_type,
-                consumes,
-            ))
+            raise InvalidBodyFormat(f'Content-type {request.content_type} is not supported ({consumes!r} are)')
 
         return read_body(request, None)

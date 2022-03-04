@@ -47,7 +47,7 @@ def read_parameters(request, view_kwargs=None, capture_errors=False):  # noqa: C
                 if param.has_default:
                     params[param.name] = param.default
                 elif param.required:  # Required but missing
-                    errors[param.name] = MissingParameter('parameter %s is required but missing' % param.name)
+                    errors[param.name] = MissingParameter(f'parameter {param.name} is required but missing')
                 continue  # No value, or a default was added, or an error was added.
             params[param.name] = param.cast(request.api_info.api, value)
         except (NotImplementedError, ImproperlyConfigured):

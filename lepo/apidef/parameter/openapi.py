@@ -135,7 +135,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
         elif self.location == 'header':
             if style != 'simple':  # pragma: no cover
                 raise InvalidParameterDefinition('Header parameters always use the simple style, says the spec')
-            meta_key = 'HTTP_%s' % self.name.upper().replace('-', '_')
+            meta_key = f"HTTP_{self.name.upper().replace('-', '_')}"
             if meta_key not in request.META:
                 return NO_VALUE
             value = request.META[meta_key]
@@ -167,11 +167,10 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
 
         if type in ('array', 'object'):
             if not splitter:
-                raise InvalidParameterDefinition('The location/style/explode combination {}/{}/{} is not supported'.format(
-                    self.location,
-                    style,
-                    explode,
-                ))
+                raise InvalidParameterDefinition(
+                    f'The location/style/explode combination '
+                    f'{self.location}/{style}/{explode} is not supported'
+                )
             value = splitter(value)
             if type == 'object':
                 value = OrderedDict(zip(value[::2], value[1::2]))
@@ -220,10 +219,7 @@ class OpenAPI3BodyParameter(OpenAPI3Parameter):
         media_map = self.media_map
         content_type_name = media_map.match(request.content_type)
         if not content_type_name:
-            raise InvalidBodyFormat('Content-type {} is not supported ({!r} are)'.format(
-                request.content_type,
-                media_map.keys(),
-            ))
+            raise InvalidBodyFormat(f'Content-type {request.content_type} is not supported ({media_map.keys()!r} are)')
         parameter = media_map[content_type_name]
         value = read_body(request, parameter=parameter)
         return WrappedValue(parameter=parameter, value=value)
