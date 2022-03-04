@@ -79,7 +79,7 @@ def test_post_pet(client, api_urls, with_tag):
 
     # Test we can get the pet from the API now
     assert get_data_from_response(client.get('/api/pets')) == [pet]
-    assert get_data_from_response(client.get('/api/pets/{}'.format(pet['id']))) == pet
+    assert get_data_from_response(client.get(f"/api/pets/{pet['id']}")) == pet
 
 
 @pytest.mark.django_db
@@ -98,7 +98,7 @@ def test_delete_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     pet2 = Pet.objects.create(name='worl')
     assert len(get_data_from_response(client.get('/api/pets'))) == 2
-    client.delete('/api/pets/{}'.format(pet1.id))
+    client.delete(f'/api/pets/{pet1.id}')
     assert len(get_data_from_response(client.get('/api/pets'))) == 1
 
 
@@ -107,7 +107,7 @@ def test_update_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     payload = {'name': 'worl', 'tag': 'bunner'}
     resp = client.patch(
-        '/api/pets/{}'.format(pet1.id),
+        f'/api/pets/{pet1.id}',
         json.dumps(payload),
         content_type='application/json'
     )

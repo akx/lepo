@@ -125,7 +125,7 @@ class Router:
         if handler:
             return handler
         raise MissingHandler(
-            'Missing handler for operation %s (tried %s too)' % (operation_id, snake_case(operation_id))
+            f'Missing handler for operation {operation_id} (tried {snake_case(operation_id)} too)'
         )
 
     def add_handlers(self, namespace):

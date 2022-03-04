@@ -16,9 +16,7 @@ def validate_router(router):
             for param in operation.parameters:
                 if param.location == 'header' and '_' in param.name:  # See https://github.com/akx/lepo/issues/23
                     ipd = InvalidParameterDefinition(
-                        '{name}: Header parameter names may not contain underscores (Django bug 25048)'.format(
-                            name=param.name,
-                        )
+                        f'{param.name}: Header parameter names may not contain underscores (Django bug 25048)'
                     )
                     errors[operation].append(ipd)
 

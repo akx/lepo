@@ -23,7 +23,7 @@ class Path:
         self.name = self._build_view_name()
 
     def get_view_class(self, router):
-        return type('%sView' % self.name.title(), (PathView,), {
+        return type(f'{self.name.title()}View', (PathView,), {
             'path': self,
             'router': router,
         })
@@ -36,14 +36,14 @@ class Path:
     def _build_regex(self):
         return re.sub(
             PATH_PLACEHOLDER_REGEX,
-            lambda m: '(?P<%s>[^/]+?)' % m.group(1),
+            lambda m: f'(?P<{m.group(1)}>[^/]+?)',
             self.path,
         ).lstrip('/') + '$'
 
     def get_operation(self, method):
         operation_data = self.mapping.get(method.lower())
         if not operation_data:
-            raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
+            raise InvalidOperation(f'Path {self.path} does not support method {method.upper()}')
         return self.api.operation_class(api=self.api, path=self, data=operation_data, method=method)
 
     def get_operations(self):

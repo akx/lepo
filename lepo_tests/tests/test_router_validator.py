@@ -7,7 +7,7 @@ from lepo_tests.tests.utils import doc_versions, get_router
 
 @doc_versions
 def test_validator(doc_version):
-    router = get_router('{}/schema-refs.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/schema-refs.yaml')
     with pytest.raises(RouterValidationError) as ei:
         validate_router(router)
     assert len(ei.value.errors) == 2
@@ -15,7 +15,7 @@ def test_validator(doc_version):
 
 @doc_versions
 def test_header_underscore(doc_version):
-    router = get_router('{}/header-underscore.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/header-underscore.yaml')
     with pytest.raises(RouterValidationError) as ei:
         validate_router(router)
     errors = list(ei.value.flat_errors)

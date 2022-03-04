@@ -12,13 +12,13 @@ hachiko = {'name': 'Hachiko', 'petType': 'Dog', 'packSize': 83}
 
 @doc_versions
 def test_path_refs(doc_version):
-    router = get_router('{}/path-refs.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/path-refs.yaml')
     assert router.get_path('/b').mapping == router.get_path('/a').mapping
 
 
 @doc_versions
 def test_schema_refs(rf, doc_version):
-    router = get_router('{}/schema-refs.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/schema-refs.yaml')
     request = rf.post('/cat', json.dumps(lil_bub), content_type='application/json')
     request.api_info = APIInfo(router.get_path('/cat').get_operation('post'))
     params = read_parameters(request, {})
@@ -28,7 +28,7 @@ def test_schema_refs(rf, doc_version):
 @doc_versions
 @pytest.mark.parametrize('object', (lil_bub, hachiko))
 def test_polymorphism(rf, doc_version, object):
-    router = get_router('{}/schema-refs.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/schema-refs.yaml')
     request = rf.post('/pet', json.dumps(object), content_type='application/json')
     request.api_info = APIInfo(router.get_path('/pet').get_operation('post'))
     params = read_parameters(request, {})

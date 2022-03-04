@@ -33,7 +33,7 @@ class BaseHandler:
         return view
 
     def get_processors(self, purpose):
-        return getattr(self, '%s_processors' % purpose, ())
+        return getattr(self, f'{purpose}_processors', ())
 
     def call_processors(self, purpose, **kwargs):
         for proc in self.get_processors(purpose):
@@ -52,7 +52,7 @@ class BaseModelHandler(BaseHandler):
     id_field_name = 'pk'
 
     def get_schema(self, purpose, object=None):
-        schema_class = getattr(self, '%s_schema_class' % purpose, None)
+        schema_class = getattr(self, f'{purpose}_schema_class', None)
         if schema_class is None:
             schema_class = self.schema_class
         kwargs = {}
@@ -61,7 +61,7 @@ class BaseModelHandler(BaseHandler):
         return schema_class(**kwargs)
 
     def get_queryset(self, purpose):
-        queryset = getattr(self, '%s_queryset' % purpose, None)
+        queryset = getattr(self, f'{purpose}_queryset', None)
         if queryset is None:
             queryset = self.queryset
         return deepcopy(queryset)
