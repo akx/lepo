@@ -35,4 +35,4 @@ jobs:
           DJANGO: '${{ matrix.DJANGO }}'
       - run: flake8 lepo
       - run: py.test -vvv --cov .
-      - run: 'bash <(curl -s https://codecov.io/bash)'
+      - uses: codecov/codecov-action@v2
