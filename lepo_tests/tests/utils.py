@@ -5,7 +5,7 @@ import pytest
 from django.test import RequestFactory
 
 from lepo.api_info import APIInfo
-from lepo.apidef.doc import Swagger2APIDefinition, OpenAPI3APIDefinition
+from lepo.apidef.doc import OpenAPI3APIDefinition, Swagger2APIDefinition
 from lepo.router import Router
 
 TESTS_DIR = os.path.dirname(__file__)

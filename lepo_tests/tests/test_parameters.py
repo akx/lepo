@@ -9,7 +9,7 @@ from lepo.apidef.doc import Swagger2APIDefinition
 from lepo.apidef.parameter.openapi import OpenAPI3BodyParameter
 from lepo.excs import ErroneousParameters, MissingParameter
 from lepo.parameter_utils import read_parameters
-from lepo_tests.tests.utils import DOC_VERSIONS, get_router, cast_parameter_value
+from lepo_tests.tests.utils import DOC_VERSIONS, cast_parameter_value, get_router
 
 routers = pytest.mark.parametrize('router', [
     get_router(f'{doc_version}/parameter-test.yaml')

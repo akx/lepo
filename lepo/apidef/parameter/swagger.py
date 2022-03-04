@@ -1,7 +1,14 @@
 import jsonschema
 
-from lepo.apidef.parameter.base import BaseParameter, BaseTopParameter, NO_VALUE
-from lepo.apidef.parameter.utils import comma_split, pipe_split, read_body, space_split, tab_split, validate_schema
+from lepo.apidef.parameter.base import NO_VALUE, BaseParameter, BaseTopParameter
+from lepo.apidef.parameter.utils import (
+    comma_split,
+    pipe_split,
+    read_body,
+    space_split,
+    tab_split,
+    validate_schema,
+)
 from lepo.excs import InvalidBodyFormat
 from lepo.parameter_utils import cast_primitive_value
 from lepo.utils import maybe_resolve

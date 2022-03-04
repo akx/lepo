@@ -2,12 +2,13 @@ try:
     from collections.abc import Iterable
 except ImportError:
     from collections import Iterable
+
 from functools import reduce
 from importlib import import_module
 from inspect import isfunction, ismethod
 
-from django.urls import re_path
 from django.http import HttpResponse
+from django.urls import re_path
 
 from lepo.apidef.doc import APIDefinition
 from lepo.excs import MissingHandler

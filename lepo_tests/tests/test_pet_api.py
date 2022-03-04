@@ -4,7 +4,7 @@ import django.conf
 import pytest
 from django.utils.crypto import get_random_string
 
-from lepo.excs import InvalidBodyContent, InvalidBodyFormat, ErroneousParameters
+from lepo.excs import ErroneousParameters, InvalidBodyContent, InvalidBodyFormat
 from lepo_tests.models import Pet
 from lepo_tests.tests.utils import get_data_from_response
 from lepo_tests.utils import urlconf_map

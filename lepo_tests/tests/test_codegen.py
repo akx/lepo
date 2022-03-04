@@ -1,7 +1,7 @@
 import os
 
-from lepo_tests.tests.utils import doc_versions
 from lepo import codegen
+from lepo_tests.tests.utils import doc_versions
 
 
 @doc_versions

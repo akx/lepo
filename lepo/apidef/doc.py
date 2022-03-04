@@ -3,7 +3,7 @@ from jsonschema import RefResolver
 from lepo.apidef.operation.openapi import OpenAPI3Operation
 from lepo.apidef.operation.swagger import Swagger2Operation
 from lepo.apidef.path import Path
-from lepo.apidef.version import OPENAPI_3, parse_version, SWAGGER_2
+from lepo.apidef.version import OPENAPI_3, SWAGGER_2, parse_version
 from lepo.utils import maybe_resolve
 
 
