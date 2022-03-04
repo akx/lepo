@@ -12,7 +12,7 @@ from lepo.parameter_utils import read_parameters
 from lepo_tests.tests.utils import DOC_VERSIONS, get_router, cast_parameter_value
 
 routers = pytest.mark.parametrize('router', [
-    get_router('{}/parameter-test.yaml'.format(doc_version))
+    get_router(f'{doc_version}/parameter-test.yaml')
     for doc_version
     in DOC_VERSIONS
 ], ids=DOC_VERSIONS)

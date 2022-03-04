@@ -31,7 +31,7 @@ class PetHandler(CRUDModelHandler):
             limit = self.args.get('limit')
             if limit is not None:
                 object_list = object_list[:limit]
-        return super(PetHandler, self).process_object_list(purpose, object_list)
+        return super().process_object_list(purpose, object_list)
 
 
 find_pets = PetHandler.get_view('handle_list')

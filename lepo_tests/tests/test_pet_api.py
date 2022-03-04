@@ -98,7 +98,7 @@ def test_delete_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     pet2 = Pet.objects.create(name='worl')
     assert len(get_data_from_response(client.get('/api/pets'))) == 2
-    client.delete('/api/pets/{}'.format(pet1.id))
+    client.delete(f'/api/pets/{pet1.id}')
     assert len(get_data_from_response(client.get('/api/pets'))) == 1
 
 
@@ -107,7 +107,7 @@ def test_update_pet(client, api_urls):
     pet1 = Pet.objects.create(name='henlo')
     payload = {'name': 'worl', 'tag': 'bunner'}
     resp = client.patch(
-        '/api/pets/{}'.format(pet1.id),
+        f'/api/pets/{pet1.id}',
         json.dumps(payload),
         content_type='application/json'
     )

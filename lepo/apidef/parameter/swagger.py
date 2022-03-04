@@ -126,7 +126,7 @@ class Swagger2Parameter(Swagger2BaseParameter, BaseTopParameter):
     def read_body(self, request):
         consumes = request.api_info.operation.consumes
         if request.content_type not in consumes:
-            raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
+            raise InvalidBodyFormat('Content-type {} is not supported ({!r} are)'.format(
                 request.content_type,
                 consumes,
             ))

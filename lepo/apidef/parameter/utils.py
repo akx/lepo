@@ -52,8 +52,7 @@ class LepoDraft4Validator(Draft4Validator):
         if isinstance(instance, File):
             # Skip validating File instances that come from POST requests...
             return
-        for error in super(LepoDraft4Validator, self).iter_errors(instance, _schema):
-            yield error
+        yield from super().iter_errors(instance, _schema)
 
 
 def validate_schema(schema, api, value):

@@ -167,7 +167,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
 
         if type in ('array', 'object'):
             if not splitter:
-                raise InvalidParameterDefinition('The location/style/explode combination %s/%s/%s is not supported' % (
+                raise InvalidParameterDefinition('The location/style/explode combination {}/{}/{} is not supported'.format(
                     self.location,
                     style,
                     explode,
@@ -190,7 +190,7 @@ class OpenAPI3Parameter(OpenAPI3BaseParameter, BaseTopParameter):
                 except Exception as exc:
                     errors[content_type] = exc
         raise InvalidComplexContent(
-            'No decoder could handle the value {!r}: {}'.format(value, errors),
+            f'No decoder could handle the value {value!r}: {errors}',
             errors,
         )
 
@@ -220,7 +220,7 @@ class OpenAPI3BodyParameter(OpenAPI3Parameter):
         media_map = self.media_map
         content_type_name = media_map.match(request.content_type)
         if not content_type_name:
-            raise InvalidBodyFormat('Content-type %s is not supported (%r are)' % (
+            raise InvalidBodyFormat('Content-type {} is not supported ({!r} are)'.format(
                 request.content_type,
                 media_map.keys(),
             ))

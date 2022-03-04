@@ -10,7 +10,7 @@ class BaseParameter:
         self.api = api
 
     def __repr__(self):
-        return '<%s (%r)>' % (self.__class__.__name__, self.data)
+        return f'<{self.__class__.__name__} ({self.data!r})>'
 
     @property
     def location(self):
@@ -41,7 +41,7 @@ class BaseTopParameter(BaseParameter):
     """
 
     def __init__(self, data, api=None, operation=None):
-        super(BaseTopParameter, self).__init__(data, api=api)
+        super().__init__(data, api=api)
         self.operation = operation
 
     @property
@@ -53,4 +53,4 @@ class BaseTopParameter(BaseParameter):
         return self.location in ('formData', 'body')
 
     def get_value(self, request, view_kwargs):
-        raise InvalidParameterDefinition('unsupported `in` value %r in %r' % (self.location, self))  # pragma: no cover
+        raise InvalidParameterDefinition(f'unsupported `in` value {self.location!r} in {self!r}')  # pragma: no cover

@@ -41,10 +41,10 @@ urlpatterns = get_urlpatterns(%(module)s, %(file)r)
 
 
 def generate_urlconf_module(handler_style, version):
-    modname = 'lepo_tests.generated_urls_%(handler_style)s_%(version)s' % {
-        'handler_style': handler_style,
-        'version': version,
-    }
+    modname = 'lepo_tests.generated_urls_{handler_style}_{version}'.format(
+        handler_style=handler_style,
+        version=version,
+    )
     mod = types.ModuleType(modname)
     code = URLCONF_TEMPLATE % {
         'module': handler_style,

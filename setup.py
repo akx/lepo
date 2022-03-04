@@ -4,7 +4,7 @@ import setuptools
 with open('./requirements.in') as f:
     install_requires = [l for l in f.readlines() if l and not l.startswith('#')]
 
-with open('./lepo/__init__.py', 'r') as infp:
+with open('./lepo/__init__.py') as infp:
     version = re.search("__version__ = ['\"]([^'\"]+)['\"]", infp.read()).group(1)
 
 if __name__ == '__main__':

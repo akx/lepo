@@ -10,4 +10,4 @@ def test_codegen(doc_version, capsys):
     codegen.cmdline([path])
     out, err = capsys.readouterr()
     # Compile to test for syntax errors
-    compile(out, '{}-generated.py'.format(doc_version), 'exec')
+    compile(out, f'{doc_version}-generated.py', 'exec')

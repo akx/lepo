@@ -43,7 +43,7 @@ class Path:
     def get_operation(self, method):
         operation_data = self.mapping.get(method.lower())
         if not operation_data:
-            raise InvalidOperation('Path %s does not support method %s' % (self.path, method.upper()))
+            raise InvalidOperation(f'Path {self.path} does not support method {method.upper()}')
         return self.api.operation_class(api=self.api, path=self, data=operation_data, method=method)
 
     def get_operations(self):

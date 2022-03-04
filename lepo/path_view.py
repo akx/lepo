@@ -20,11 +20,11 @@ class PathView(View):
             operation=operation,
             router=self.router,
         )
-        params = dict(
-            (snake_case(name), value)
+        params = {
+            snake_case(name): value
             for (name, value)
             in read_parameters(request, kwargs, capture_errors=True).items()
-        )
+        }
         handler = request.api_info.router.get_handler(operation.id)
         try:
             response = handler(request, **params)

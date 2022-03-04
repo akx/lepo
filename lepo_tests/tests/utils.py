@@ -17,7 +17,7 @@ def get_router(fixture_name):
 
 def get_data_from_response(response, status=200):
     if status and response.status_code != status:
-        raise ValueError('failed status check (%s != expected %s)' % (response.status_code, status))  # pragma: no cover
+        raise ValueError(f'failed status check ({response.status_code} != expected {status})')  # pragma: no cover
     return json.loads(response.content.decode('utf-8'))
 
 

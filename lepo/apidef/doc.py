@@ -37,8 +37,7 @@ class APIDefinition:
         return maybe_resolve(self.doc['paths'][path], self.resolve_reference)
 
     def get_path_names(self):
-        for path in self.doc['paths']:
-            yield path
+        yield from self.doc['paths']
 
     def get_path(self, path):
         """

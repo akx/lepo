@@ -76,6 +76,6 @@ collection_format_cases = [
 def test_collection_formats(doc_version, case):
     schema = (case.swagger2_schema if doc_version == 'swagger2' else case.openapi3_schema)
     if schema is None:
-        pytest.xfail('{}: no schema for {}'.format(case, doc_version))
+        pytest.xfail(f'{case}: no schema for {doc_version}')
     apidoc = get_apidoc_from_version(doc_version)
     assert cast_parameter_value(apidoc, schema, case.input) == case.expected

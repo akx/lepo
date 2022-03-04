@@ -10,7 +10,7 @@ def greet(request, greeting, greetee):
 
 @doc_versions
 def test_exceptional_response(rf, doc_version):
-    router = get_router('{}/parameter-test.yaml'.format(doc_version))
+    router = get_router(f'{doc_version}/parameter-test.yaml')
     router.add_handlers({'greet': greet})
     path_view = router.get_path_view_class('/greet').as_view()
     response = path_view(rf.get('/', {'greeting': 'hello', 'greetee': 'world'}))
